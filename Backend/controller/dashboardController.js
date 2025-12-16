@@ -1,6 +1,6 @@
 const Platform = require("../models/platform")
 const fetchLeetCode = require("../utils/fetchLeetCode")
-const fetchGFG = require("../utils/fetchGFG")
+const fetchGFG = require("../utils/fetchGfg")
 const fetchCodeChef = require("../utils/fetchCodchef")
 const fetchCodeforces = require("../utils/fetchCodforces")
 const fetchHackerRank = require("../utils/fetchhackerrank")
