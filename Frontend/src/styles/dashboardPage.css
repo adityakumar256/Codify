@@ -1,0 +1,173 @@
+/* Custom animations for dashboard */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(205, 28, 24, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(205, 28, 24, 0.8);
+  }
+}
+
+@keyframes monkeyJump {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translateY(-100px) rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: translateY(0) rotate(360deg) scale(1);
+  }
+}
+
+/* 3D Card effects */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: all 0.5s ease;
+}
+
+.card-3d:hover {
+  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+}
+
+/* 3D monkey mascot styles */
+.monkey-mascot {
+  position: fixed;
+  font-size: 80px;
+  z-index: 50;
+  transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  filter: drop-shadow(0 10px 30px rgba(205, 28, 24, 0.5));
+  cursor: pointer;
+  user-select: none;
+}
+
+.monkey-mascot.jumping {
+  animation: monkeyJump 1s ease-in-out;
+}
+
+/* Grid background pattern */
+.grid-background {
+  background-image: linear-gradient(to right, rgba(205, 28, 24, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(205, 28, 24, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+  position: relative;
+}
+
+.grid-background::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(10, 10, 10, 0.8) 100%);
+  pointer-events: none;
+}
+
+/* Enhanced profile shadow effects with layered shadows */
+.profile-shadow-effect {
+  box-shadow:
+    0 0 80px rgba(205, 28, 24, 0.4),
+    0 0 160px rgba(205, 28, 24, 0.3),
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    inset 0 0 80px rgba(205, 28, 24, 0.15),
+    inset 0 2px 40px rgba(255, 168, 150, 0.1);
+}
+
+/* Animated border with moving black-white gradient */
+@keyframes borderMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-border {
+  position: relative;
+}
+
+.animated-border::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  background: linear-gradient(90deg, #ffffff 0%, #000000 25%, #ffffff 50%, #000000 75%, #ffffff 100%);
+  background-size: 200% 100%;
+  border-radius: 2rem;
+  animation: borderMove 3s linear infinite;
+  z-index: -1;
+  opacity: 0.8;
+}
+
+.animated-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--background);
+  border-radius: 1.5rem;
+  z-index: -1;
+}
+
+/* Image upload preview styles */
+.image-upload-preview {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(205, 28, 24, 0.5);
+  box-shadow: 0 0 30px rgba(205, 28, 24, 0.4);
+}
+
+/* Gradient text effect */
+.gradient-text {
+  background: linear-gradient(135deg, #cd1c18 0%, #ffa896 50%, #9b1313 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(26, 26, 26, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Pulse glow animation utility */
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}

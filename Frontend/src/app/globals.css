@@ -1,0 +1,119 @@
+/* =========================
+   Tailwind Setup
+   ========================= */
+@import "tailwindcss";
+@tailwind utilities;
+
+/* Optional: only if installed */
+/* @import "tw-animate-css"; */
+
+@custom-variant dark (&:is(.dark *));
+
+/* =========================
+   Base Theme Variables
+   ========================= */
+:root {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #141414;
+  --card-foreground: #fafafa;
+  --popover: #141414;
+  --popover-foreground: #fafafa;
+  --primary: #d4de95;
+  --primary-foreground: #3d4127;
+  --secondary: #636b2f;
+  --secondary-foreground: #fafafa;
+  --muted: #1a1a1a;
+  --muted-foreground: #a1a1aa;
+  --accent: #bac095;
+  --accent-foreground: #3d4127;
+  --destructive: #dc2626;
+  --destructive-foreground: #fafafa;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #bac095;
+  --radius: 0.625rem;
+}
+
+/* Dark override (optional) */
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+}
+
+/* =========================
+   Tailwind Base Layer
+   ========================= */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* =========================
+   Shared Animations
+   ========================= */
+@keyframes grid-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes particle-float {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-100px) scale(0); opacity: 0; }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-particle-float { animation: particle-float 2s ease-out forwards; }
+
+/* =========================
+   Dashboard Scoped Theme
+   ========================= */
+.dashboard-theme {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #1a1a1a;
+  --card-foreground: #fafafa;
+  --popover: #1a1a1a;
+  --popover-foreground: #fafafa;
+
+  --primary: #cd1c18;
+  --primary-foreground: #fafafa;
+  --secondary: #38000a;
+  --secondary-foreground: #fafafa;
+
+  --muted: #2a2a2a;
+  --muted-foreground: #a0a0a0;
+
+  --accent: #9b1313;
+  --accent-foreground: #fafafa;
+
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: #cd1c18;
+
+  --radius: 0.75rem;
+}
+
+/* =========================
+   Dashboard Utilities
+   ========================= */
+.dashboard-theme .glass {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.dashboard-theme .gradient-text {
+  background: linear-gradient(135deg, #cd1c18, #ffa896);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
