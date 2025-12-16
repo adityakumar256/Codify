@@ -2,81 +2,35 @@
 
 import { useEffect, useState } from "react"
 
+/* ---------- HELPERS ---------- */
+const hasValue = (v) => v !== null && v !== undefined && v !== 0
+
 export function ProblemsCircular({ problems, isLoaded, isDarkBg }) {
-  const hasData =
-    problems &&
-    (problems?.fundamentals?.total > 0 || problems?.dsa?.total > 0)
+  const totalSolved = problems?.fundamentals?.total ?? 0
+  const hasData = hasValue(totalSolved)
 
-  const [progress, setProgress] = useState({ fundamentals: 0, dsa: 0 })
+  const [progress, setProgress] = useState(0)
 
+  /* ---------- ANIMATION ---------- */
   useEffect(() => {
     if (!isLoaded || !hasData) return
 
-    const steps = 60
-    let current = 0
-
+    let curr = 0
     const interval = setInterval(() => {
-      current++
-      setProgress({
-        fundamentals: Math.min((current / steps) * 100, 100),
-        dsa: Math.min((current / steps) * 100, 100),
-      })
-      if (current >= steps) clearInterval(interval)
-    }, 30)
+      curr += 2
+      setProgress(Math.min(curr, 100))
+      if (curr >= 100) clearInterval(interval)
+    }, 20)
 
     return () => clearInterval(interval)
   }, [isLoaded, hasData])
 
-  const platformColors = {
-    GFG: "#2f8d46",
-    HackerRank: "#00ea64",
-  }
+  /* ---------- NOTHING TO SHOW ---------- */
+  if (!hasData) return null
 
-  const difficultyColors = {
-    Easy: "#10b981",
-    Medium: "#eab308",
-    Hard: "#ef4444",
-  }
-
-  const RADIUS = 56
+  const RADIUS = 54
   const CIRC = 2 * Math.PI * RADIUS
-
-  const buildSegments = (items = [], total = 0, colorMap, keyName) => {
-    if (!total) return []
-    let offset = 0
-
-    return items.map((item) => {
-      const pct = (item.count / total) * 100
-      const len = (CIRC * pct) / 100
-      const seg = {
-        label: item[keyName],
-        count: item.count,
-        color: colorMap[item[keyName]] || "#10b981",
-        offset,
-        length: len,
-      }
-      offset += len
-      return seg
-    })
-  }
-
-  const fundamentalsSegments = hasData
-    ? buildSegments(
-        problems.fundamentals.breakdown,
-        problems.fundamentals.total,
-        platformColors,
-        "platform"
-      )
-    : []
-
-  const dsaSegments = hasData
-    ? buildSegments(
-        problems.dsa.breakdown,
-        problems.dsa.total,
-        difficultyColors,
-        "difficulty"
-      )
-    : []
+  const offset = CIRC * (1 - progress / 100)
 
   return (
     <aside
@@ -89,146 +43,62 @@ export function ProblemsCircular({ problems, isLoaded, isDarkBg }) {
         }
       `}
     >
-      <h2
-        className={`text-xl font-bold mb-6 ${
-          isDarkBg ? "text-white" : "text-neutral-900"
-        }`}
-      >
+      <h2 className="text-xl font-bold mb-8">
         Problems Solved
       </h2>
 
-      {/* ===== EMPTY STATE ===== */}
-      {!hasData && (
-        <div className="h-[70vh] flex flex-col items-center justify-center text-center">
-          <p className="text-lg font-semibold text-neutral-400 mb-2">
-            No problems solved yet
-          </p>
-          <p className="text-sm text-neutral-500">
-            Start solving problems to unlock insights
-          </p>
+      {/* ---------- MAIN CIRCLE ---------- */}
+      <div className="flex flex-col items-center justify-center mt-10">
+        <div className="relative w-40 h-40 mb-6">
+          <svg className="w-full h-full -rotate-90">
+            <circle
+              cx="80"
+              cy="80"
+              r={RADIUS}
+              stroke={isDarkBg ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
+              strokeWidth="10"
+              fill="none"
+            />
+            <circle
+              cx="80"
+              cy="80"
+              r={RADIUS}
+              stroke="#ef4444"
+              strokeWidth="10"
+              fill="none"
+              strokeLinecap="round"
+              strokeDasharray={CIRC}
+              strokeDashoffset={offset}
+            />
+          </svg>
+
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <div className="text-4xl font-bold">
+              {totalSolved}
+            </div>
+            <div className="text-sm text-neutral-400">
+              Total Solved
+            </div>
+          </div>
         </div>
-      )}
 
-      {/* ===== DATA STATE ===== */}
-      {hasData && (
-        <>
-          {/* Fundamentals */}
-          <Section
-            title="Fundamentals"
-            total={problems.fundamentals.total}
-            segments={fundamentalsSegments}
-            progress={progress.fundamentals}
-            isDarkBg={isDarkBg}
-            radius={RADIUS}
-            circumference={CIRC}
-          />
-
-          <hr
-            className={`my-8 ${
-              isDarkBg ? "border-neutral-800" : "border-neutral-200"
-            }`}
-          />
-
-          {/* DSA */}
-          <Section
-            title="DSA"
-            total={problems.dsa.total}
-            segments={dsaSegments}
-            progress={progress.dsa}
-            isDarkBg={isDarkBg}
-            radius={RADIUS}
-            circumference={CIRC}
-          />
-
-          <hr
-            className={`my-8 ${
-              isDarkBg ? "border-neutral-800" : "border-neutral-200"
-            }`}
-          />
-
-          <h3
-            className={`font-semibold mb-2 ${
-              isDarkBg ? "text-white" : "text-neutral-900"
-            }`}
-          >
-            Competitive Programming
-          </h3>
-          <p
-            className={`text-sm ${
-              isDarkBg ? "text-neutral-400" : "text-neutral-600"
-            }`}
-          >
-            Contest stats coming soon…
-          </p>
-        </>
-      )}
+        {/* ---------- INFO ---------- */}
+        <div className="w-full space-y-3 mt-6">
+          <InfoRow label="Strongest Area" value="DSA / Problem Solving" />
+          <InfoRow label="Primary Platform" value="LeetCode" />
+          <InfoRow label="Consistency" value="High" />
+        </div>
+      </div>
     </aside>
   )
 }
 
-/* 🔹 Reusable Section Component (UNCHANGED UI) */
-function Section({
-  title,
-  total,
-  segments,
-  progress,
-  isDarkBg,
-  radius,
-  circumference,
-}) {
+/* ---------- SMALL ROW ---------- */
+function InfoRow({ label, value }) {
   return (
-    <div className="mb-6">
-      <h3
-        className={`font-semibold mb-4 ${
-          isDarkBg ? "text-white" : "text-neutral-900"
-        }`}
-      >
-        {title}
-      </h3>
-
-      <div className="flex gap-6 items-center">
-        {/* Circle */}
-        <div className="relative w-32 h-32">
-          <svg className="w-full h-full -rotate-90">
-            <circle
-              cx="64"
-              cy="64"
-              r={radius}
-              stroke={isDarkBg ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
-              strokeWidth="8"
-              fill="none"
-            />
-            {segments.map((seg, i) => (
-              <circle
-                key={i}
-                cx="64"
-                cy="64"
-                r={radius}
-                stroke={seg.color}
-                strokeWidth="8"
-                fill="none"
-                strokeLinecap="round"
-                strokeDasharray={`${seg.length * (progress / 100)} ${circumference}`}
-                strokeDashoffset={-seg.offset * (progress / 100)}
-              />
-            ))}
-          </svg>
-
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-3xl font-bold">{total}</span>
-          </div>
-        </div>
-
-        {/* Breakdown */}
-        <div className="flex-1 space-y-2">
-          {segments.map((s) => (
-            <div key={s.label} className="flex justify-between">
-              <span style={{ color: s.color }}>{s.label}</span>
-              <span className="font-bold">{s.count}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="flex justify-between text-sm">
+      <span className="text-neutral-400">{label}</span>
+      <span className="font-semibold">{value}</span>
     </div>
   )
 }

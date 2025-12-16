@@ -31,6 +31,7 @@ app.use("/app/platform", platformroute);
 app.use("/app/profile", profileroute);
 app.use("/app/dashboard", dashboard);
 
+console.log("GITHUB TOKEN:", process.env.GITHUB_TOKEN);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

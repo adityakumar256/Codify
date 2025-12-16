@@ -10,12 +10,20 @@ async function fetchCodeChef(username) {
 
     const $ = cheerio.load(data);
 
-    return {
-      rating: $(".rating-number").text().trim() || null,
-      rank: $(".rating-ranks li strong").first().text().trim() || null,
-    };
+    const rating = $(".rating-number").text().trim() || null;
+    const rank = $(".rating-ranks li strong").first().text().trim() || null;
 
-  } catch {
+    // ✅ Solved problems count (update selector if needed)
+    let totalSolved = 0;
+    $(".problem-solved").each((i, el) => {
+      const text = $(el).text().trim();
+      const match = text.match(/\d+/);
+      if (match) totalSolved = parseInt(match[0], 10);
+    });
+
+    return { rating, rank, totalSolved };
+  } catch (err) {
+    console.error("CodeChef fetch error:", err.message);
     return null;
   }
 }

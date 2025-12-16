@@ -31,6 +31,7 @@ function normalizeProfile({
       repositories: extra.repositories ?? null,
       followers: extra.followers ?? null,
       following: extra.following ?? null,
+      ...extra, // preserve custom fields like "note"
     },
   };
 }

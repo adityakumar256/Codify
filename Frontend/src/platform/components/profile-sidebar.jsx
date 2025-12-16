@@ -1,6 +1,9 @@
 "use client"
 
-import { Mail, Github, Linkedin, Twitter, MapPin, Building2 } from "lucide-react"
+import { Mail, Building2 } from "lucide-react"
+
+/* ---------- HELPERS ---------- */
+const hasValue = (v) => v !== null && v !== undefined && v !== 0
 
 export function ProfileSidebar({ user, platforms = [], isLoaded, isDarkBg }) {
   if (!user) return null
@@ -31,20 +34,12 @@ export function ProfileSidebar({ user, platforms = [], isLoaded, isDarkBg }) {
           />
         </div>
 
-        <h2
-          className={`text-2xl font-bold mb-1 ${
-            isDarkBg ? "text-white" : "text-neutral-900"
-          }`}
-        >
+        <h2 className="text-2xl font-bold mb-1">
           {user.name}
         </h2>
 
         {user.description && (
-          <p
-            className={`text-sm mb-4 ${
-              isDarkBg ? "text-neutral-400" : "text-neutral-600"
-            }`}
-          >
+          <p className="text-sm mb-4 text-neutral-400">
             {user.description}
           </p>
         )}
@@ -54,7 +49,7 @@ export function ProfileSidebar({ user, platforms = [], isLoaded, isDarkBg }) {
         </button>
       </div>
 
-      {/* ================= SOCIALS ================= */}
+      {/* ================= SOCIAL ================= */}
       <div className="flex justify-center gap-4 mb-8">
         {user.email && (
           <a href={`mailto:${user.email}`} className="social-btn">
@@ -64,31 +59,22 @@ export function ProfileSidebar({ user, platforms = [], isLoaded, isDarkBg }) {
       </div>
 
       {/* ================= DETAILS ================= */}
-      <div className="space-y-3 mb-8">
+      <div className="space-y-3 mb-8 text-sm text-neutral-400">
         {user.college && (
-          <div className="flex items-center gap-2 text-sm text-neutral-400">
+          <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4" />
             {user.college}
           </div>
         )}
 
         {(user.course || user.branch) && (
-          <div className="flex items-center gap-2 text-sm text-neutral-400">
+          <div>
             🎓 {user.course} {user.branch && `- ${user.branch}`}
           </div>
         )}
 
-        {user.year && (
-          <div className="flex items-center gap-2 text-sm text-neutral-400">
-            📅 {user.year}
-          </div>
-        )}
-
-        {user.contact && (
-          <div className="flex items-center gap-2 text-sm text-neutral-400">
-            📞 {user.contact}
-          </div>
-        )}
+        {user.year && <div>📅 {user.year}</div>}
+        {user.contact && <div>📞 {user.contact}</div>}
       </div>
 
       <hr
@@ -97,7 +83,7 @@ export function ProfileSidebar({ user, platforms = [], isLoaded, isDarkBg }) {
         }`}
       />
 
-      {/* ================= PLATFORMS ================= */}
+      {/* ================= PROBLEM SOLVING STATS ================= */}
       <h3
         className={`text-sm font-semibold mb-4 uppercase tracking-wide ${
           isDarkBg ? "text-neutral-400" : "text-neutral-600"
@@ -108,39 +94,46 @@ export function ProfileSidebar({ user, platforms = [], isLoaded, isDarkBg }) {
 
       <div className="space-y-3">
         {Array.isArray(platforms) &&
-          platforms.map((p) => (
-            <div
-              key={p.platform}
-              className={`flex items-center justify-between p-3 rounded-lg transition
-                ${
-                  isDarkBg
-                    ? "bg-neutral-800/30 hover:bg-neutral-800/50"
-                    : "bg-neutral-100 hover:bg-neutral-200"
-                }
-              `}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-xs font-bold text-white">
-                  {p.platform[0].toUpperCase()}
-                </div>
-                <span className="text-sm font-medium capitalize">
-                  {p.platform}
-                </span>
-              </div>
+          platforms.map((p) => {
+            const value =
+              p.platform === "github"
+                ? p.extra?.repositories
+                : p.stats?.totalSolved
 
-              {p.stats?.totalSolved > 0 && (
+            if (!hasValue(value)) return null
+
+            return (
+              <div
+                key={p.platform}
+                className={`flex items-center justify-between p-3 rounded-lg transition
+                  ${
+                    isDarkBg
+                      ? "bg-neutral-800/30 hover:bg-neutral-800/50"
+                      : "bg-neutral-100 hover:bg-neutral-200"
+                  }
+                `}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-xs font-bold text-white">
+                    {p.platform[0].toUpperCase()}
+                  </div>
+                  <span className="text-sm font-medium capitalize">
+                    {p.platform}
+                  </span>
+                </div>
+
                 <span
                   className={`text-xs px-2 py-1 rounded ${
                     isDarkBg
-                      ? "bg-neutral-800 text-neutral-400"
-                      : "bg-neutral-200 text-neutral-600"
+                      ? "bg-neutral-800 text-neutral-300"
+                      : "bg-neutral-200 text-neutral-700"
                   }`}
                 >
-                  {p.stats.totalSolved}
+                  {value}
                 </span>
-              )}
-            </div>
-          ))}
+              </div>
+            )
+          })}
       </div>
     </aside>
   )

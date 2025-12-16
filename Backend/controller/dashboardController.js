@@ -1,139 +1,116 @@
-const Platform = require("../models/platform");
-const normalizeDashboard = require("../utils/normalizeDashboard");
-const normalizeProfile = require("../utils/normalizeProfile");
-
-const fetchLeetCode = require("../utils/fetchLeetCode");
-const fetchGFG = require("../utils/fetchGFG");
-const fetchCodeChef = require("../utils/fetchCodchef");
-const fetchCodeforces = require("../utils/fetchCodforces");
-const fetchHackerRank = require("../utils/fetchhackerrank");
-const fetchGitHub = require("../utils/fetchgithub");
+const Platform = require("../models/platform")
+const fetchLeetCode = require("../utils/fetchLeetCode")
+const fetchGFG = require("../utils/fetchGFG")
+const fetchCodeChef = require("../utils/fetchCodchef")
+const fetchCodeforces = require("../utils/fetchCodforces")
+const fetchHackerRank = require("../utils/fetchhackerrank")
+const fetchGitHub = require("../utils/fetchgithub")
+const fetchGithubReposCount = require("../utils/fetchGithubReposCount")
+const normalizeProfile = require("../utils/normalizeProfile")
 
 const getDashboard = async (req, res) => {
   try {
-    const user = req.user;
+    const userId = req.user.userId
 
-    const platformDoc = await Platform.findOne({
-      userId: user.userId,
-    });
+    // ✅ YAHI MISSING THA
+    const doc = await Platform.findOne({ userId })
 
-    if (!platformDoc) {
-      return res.json(
-        normalizeDashboard({
-          user,
-          profiles: [],
+    if (!doc) {
+      return res.json({
+        user: req.user,
+        totalSolved: 0,
+        platforms: [],
+      })
+    }
+
+    const platforms = []
+    let totalSolved = 0
+
+    /* ========= LEETCODE ========= */
+    if (doc.leetcode) {
+      const raw = await fetchLeetCode(doc.leetcode)
+      if (raw) {
+        const p = normalizeProfile({
+          platform: "leetcode",
+          username: doc.leetcode,
+          profileUrl: `https://leetcode.com/${doc.leetcode}`,
+          stats: raw,
         })
-      );
-    }
-
-    const profiles = [];
-
-    // ✅ LEETCODE
-    if (platformDoc.leetcode) {
-      const raw = await fetchLeetCode(platformDoc.leetcode);
-      if (raw) {
-        profiles.push(
-          normalizeProfile({
-            platform: "leetcode",
-            username: platformDoc.leetcode,
-            profileUrl: `https://leetcode.com/${platformDoc.leetcode}`,
-            stats: raw,
-          })
-        );
+        platforms.push(p)
+        totalSolved += p.stats.totalSolved || 0
       }
     }
 
-    // ✅ GFG
-    if (platformDoc.gfg) {
-      const raw = await fetchGFG(platformDoc.gfg);
+    /* ========= CODECHEF ========= */
+    if (doc.codechef) {
+      const raw = await fetchCodeChef(doc.codechef)
       if (raw) {
-        profiles.push(
-          normalizeProfile({
-            platform: "gfg",
-            username: platformDoc.gfg,
-            profileUrl: `https://auth.geeksforgeeks.org/user/${platformDoc.gfg}`,
-            stats: raw,
-          })
-        );
+        const p = normalizeProfile({
+          platform: "codechef",
+          username: doc.codechef,
+          profileUrl: `https://www.codechef.com/users/${doc.codechef}`,
+          stats: raw,
+        })
+        platforms.push(p)
       }
     }
 
-    // ✅ CODECHEF
-    if (platformDoc.codechef) {
-      const raw = await fetchCodeChef(platformDoc.codechef);
+    /* ========= CODEFORCES ========= */
+    if (doc.codeforces) {
+      const raw = await fetchCodeforces(doc.codeforces)
       if (raw) {
-        profiles.push(
-          normalizeProfile({
-            platform: "codechef",
-            username: platformDoc.codechef,
-            profileUrl: `https://www.codechef.com/users/${platformDoc.codechef}`,
-            stats: raw,
-          })
-        );
+        const p = normalizeProfile({
+          platform: "codeforces",
+          username: doc.codeforces,
+          profileUrl: `https://codeforces.com/profile/${doc.codeforces}`,
+          stats: raw,
+        })
+        platforms.push(p)
       }
     }
 
-    // ✅ CODEFORCES
-    if (platformDoc.codeforces) {
-      const raw = await fetchCodeforces(platformDoc.codeforces);
+    /* ========= HACKERRANK ========= */
+    if (doc.hackerrank) {
+      const raw = await fetchHackerRank(doc.hackerrank)
       if (raw) {
-        profiles.push(
-          normalizeProfile({
-            platform: "codeforces",
-            username: platformDoc.codeforces,
-            profileUrl: `https://codeforces.com/profile/${platformDoc.codeforces}`,
-            stats: raw,
-          })
-        );
+        const p = normalizeProfile({
+          platform: "hackerrank",
+          username: doc.hackerrank,
+          profileUrl: `https://www.hackerrank.com/${doc.hackerrank}`,
+          stats: raw,
+        })
+        platforms.push(p)
       }
     }
 
-    // ✅ HACKERRANK
-    if (platformDoc.hackerrank) {
-      const raw = await fetchHackerRank(platformDoc.hackerrank);
-      if (raw) {
-        profiles.push(
-          normalizeProfile({
-            platform: "hackerrank",
-            username: platformDoc.hackerrank,
-            profileUrl: `https://www.hackerrank.com/${platformDoc.hackerrank}`,
-            stats: raw,
-          })
-        );
-      }
+    /* ========= GITHUB ========= */
+    if (doc.github) {
+      const profile = await fetchGitHub(doc.github)
+      const repos = await fetchGithubReposCount(doc.github)
+
+      const p = normalizeProfile({
+        platform: "github",
+        username: doc.github,
+        profileUrl: `https://github.com/${doc.github}`,
+        extra: {
+          repositories: repos,
+          followers: profile?.followers ?? null,
+          following: profile?.following ?? null,
+        },
+      })
+
+      platforms.push(p)
     }
 
-    // ✅ GITHUB (no totalSolved, but still normalized)
-    if (platformDoc.github) {
-      const raw = await fetchGitHub(platformDoc.github);
-      if (raw) {
-        profiles.push(
-          normalizeProfile({
-            platform: "github",
-            username: platformDoc.github,
-            profileUrl: `https://github.com/${platformDoc.github}`,
-            extra: {
-              repos: raw.public_repos,
-              followers: raw.followers,
-            },
-          })
-        );
-      }
-    }
-
-    const dashboardData = normalizeDashboard({
-      user,
-      profiles,
-    });
-
-    return res.json(dashboardData);
-
+    return res.json({
+      user: req.user,
+      totalSolved,
+      platforms,
+    })
   } catch (err) {
-    console.error("🔥 Dashboard Error:", err);
-    return res.status(500).json({
-      message: "Failed to load dashboard data",
-    });
+    console.error("Dashboard Error:", err)
+    res.status(500).json({ message: "Dashboard failed" })
   }
-};
+}
 
-module.exports = { getDashboard };
+module.exports = { getDashboard }

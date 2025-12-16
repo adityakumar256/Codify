@@ -9,13 +9,19 @@ async function fetchHackerRank(username) {
     });
 
     const $ = cheerio.load(data);
-    const score = $(".profile-score").text().trim();
 
-    return {
-      rating: score || null
-    };
+    // ✅ Profile score (if available)
+    const score = $(".profile-score").text().trim() || null;
 
-  } catch {
+    // ✅ Badges
+    const badges = [];
+    $(".badge-title").each((i, el) => {
+      badges.push($(el).text().trim());
+    });
+
+    return { rating: score, badges };
+  } catch (err) {
+    console.error("HackerRank fetch error:", err.message);
     return null;
   }
 }
