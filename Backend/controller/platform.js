@@ -8,7 +8,7 @@ const fetchHackerrank = require("../utils/fetchHackerrank");
 const normalizeProfile = require("../utils/normalizeProfile");
 
 
-const normalizeProfile = require("../utils/normalizeProfile");
+
 
 /* ================= SAVE ================= */
 const platformlogin = async (req, res) => {
