@@ -1,44 +1,33 @@
 const express = require("express");
 const app = express();
-const noteRoutes = require("./router/noteRoutes")
 require("dotenv").config();
 require("./db");
 
 const cors = require("cors");
 
+const noteRoutes = require("./router/noteRoutes");
+const userRoutes = require("./router/user");
+const platformRoutes = require("./router/platform");
+const profileRoutes = require("./router/profile");
+const dashboardRoutes = require("./router/dashboardRoutes");
+
 const port = process.env.PORT || 7025;
-
-const userrote = require("./router/user");
-const platformroute = require("./router/platform");
-const profileroute = require("./router/profile");
-const dashboard = require("./router/dashboardRoutes");
-
-
 
 app.use(
   cors({
-    origin: [
-      "https://codify-peach.vercel.app",
-    ],
+    origin: ["https://codify-peach.vercel.app"],
     credentials: true,
   })
-)
-
+);
 
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
-app.use("/app/user", userroute);
-app.use("/app/platform", platformroute);
-
-
-app.use("/app/notes", noteRoutes)
-
-
-app.use("/app/profile", profileroute);
-app.use("/app/dashboard", dashboard);
-
-
+app.use("/app/user", userRoutes);
+app.use("/app/platform", platformRoutes);
+app.use("/app/notes", noteRoutes);
+app.use("/app/profile", profileRoutes);
+app.use("/app/dashboard", dashboardRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
