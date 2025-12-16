@@ -30,7 +30,7 @@ export default function RedLoginCard() {
       setLoading(true);
 
       const res = await axios.post(
-        "http://localhost:7025/app/user/login",
+        "https://codify-pia9.onrender.com/app/user/login",
         { email, password }
       );
 

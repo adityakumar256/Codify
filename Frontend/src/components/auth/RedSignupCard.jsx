@@ -46,7 +46,7 @@ export default function RedSignupCard() {
       setLoading(true);
 
       const res = await axios.post(
-        "http://localhost:7025/app/user/signup",
+        "https://codify-pia9.onrender.com/app/user/signup",
         { name, email, password , confirmPassword}
       );
 
