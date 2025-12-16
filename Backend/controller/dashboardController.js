@@ -1,11 +1,13 @@
 const Platform = require("../models/platform")
+
 const fetchLeetCode = require("../utils/fetchLeetCode")
-const fetchGFG = require("../utils/fetchGfg")
-const fetchCodeChef = require("../utils/fetchCodchef")
+const fetchGfg = require("../utils/fetchGfg")
+const fetchCodechef = require("../utils/fetchCodchef")
 const fetchCodeforces = require("../utils/fetchCodforces")
-const fetchHackerRank = require("../utils/fetchhackerrank")
-const fetchGitHub = require("../utils/fetchgithub")
+const fetchHackerrank = require("../utils/fetchHackerrank")
+const fetchGithub = require("../utils/fetchGithub")
 const fetchGithubReposCount = require("../utils/fetchGithubReposCount")
+
 const normalizeProfile = require("../utils/normalizeProfile")
 
 
