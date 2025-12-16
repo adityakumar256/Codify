@@ -5,6 +5,10 @@ const jwt = require("jsonwebtoken");
 
 const privateKey = process.env.PRIVATE_KEY;
 
+if (!privateKey) {
+  console.error("❌ PRIVATE_KEY missing");
+}
+
 /* ================= SIGNUP ================= */
 const signup = async (req, res) => {
   try {
@@ -25,13 +29,11 @@ const signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({
+    const newUser = await User.create({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
     });
-
-    await newUser.save();
 
     const token = jwt.sign(
       { userId: newUser._id },
@@ -40,12 +42,17 @@ const signup = async (req, res) => {
     );
 
     return res.status(201).json({
-      message: "User successfully signed up",
-      token
+      message: "Signup successful",
+      token,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+      },
     });
 
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -76,12 +83,17 @@ const login = async (req, res) => {
     );
 
     return res.status(200).json({
-      message: "User successfully logged in",
-      token
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
     });
 
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
