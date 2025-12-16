@@ -1,11 +1,9 @@
-const Platform = require("../models/platform");
-
-const fetchGFG = require("../utils/fetchGfg");
+const fetchGfg = require("../utils/fetchGfg");
 const fetchLeetCode = require("../utils/fetchLeetCode");
-const fetchGitHub = require("../utils/fetchgithub");
+const fetchGithub = require("../utils/fetchgithub");
 const fetchCodechef = require("../utils/fetchCodchef");
 const fetchCodeforces = require("../utils/fetchCodforces");
-const fetchhackerrank = require("../utils/fetchhackerrank");
+const fetchHackerrank = require("../utils/fetchhackerrank");
 
 const normalizeProfile = require("../utils/normalizeProfile");
 
