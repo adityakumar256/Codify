@@ -1,9 +1,12 @@
 const fetchGfg = require("../utils/fetchGfg");
 const fetchLeetCode = require("../utils/fetchLeetCode");
-const fetchGithub = require("../utils/fetchgithub");
+const fetchGithub = require("../utils/fetchGithub");
 const fetchCodechef = require("../utils/fetchCodchef");
 const fetchCodeforces = require("../utils/fetchCodforces");
-const fetchHackerrank = require("../utils/fetchhackerrank");
+const fetchHackerrank = require("../utils/fetchHackerrank");
+
+const normalizeProfile = require("../utils/normalizeProfile");
+
 
 const normalizeProfile = require("../utils/normalizeProfile");
 
