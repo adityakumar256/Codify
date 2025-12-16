@@ -1,6 +1,13 @@
 "use client"
 
-import { Mail, Building2 } from "lucide-react"
+import {
+  Mail,
+  Building2,
+  Linkedin,
+  Instagram,
+  Facebook,
+} from "lucide-react"
+
 
 /* ---------- HELPERS ---------- */
 const hasValue = (v) => v !== null && v !== undefined && v !== 0
@@ -50,13 +57,59 @@ export function ProfileSidebar({ user, platforms = [], isLoaded, isDarkBg }) {
       </div>
 
       {/* ================= SOCIAL ================= */}
-      <div className="flex justify-center gap-4 mb-8">
-        {user.email && (
-          <a href={`mailto:${user.email}`} className="social-btn">
-            <Mail className="w-5 h-5" />
-          </a>
-        )}
-      </div>
+     {/* ================= SOCIAL ================= */}
+<div className="flex justify-center gap-4 mb-8">
+  {/* EMAIL */}
+  {user.email && (
+    <a
+      href={`mailto:${user.email}`}
+      className="social-btn"
+      title="Email"
+    >
+      <Mail className="w-5 h-5" />
+    </a>
+  )}
+
+  {/* LINKEDIN */}
+  {user.linkedinUrl && (
+    <a
+      href={user.linkedinUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="social-btn"
+      title="LinkedIn"
+    >
+      <Linkedin className="w-5 h-5" />
+    </a>
+  )}
+
+  {/* INSTAGRAM */}
+  {user.instagramUrl && (
+    <a
+      href={user.instagramUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="social-btn"
+      title="Instagram"
+    >
+      <Instagram className="w-5 h-5" />
+    </a>
+  )}
+
+  {/* FACEBOOK */}
+  {user.facebookUrl && (
+    <a
+      href={user.facebookUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="social-btn"
+      title="Facebook"
+    >
+      <Facebook className="w-5 h-5" />
+    </a>
+  )}
+</div>
+
 
       {/* ================= DETAILS ================= */}
       <div className="space-y-3 mb-8 text-sm text-neutral-400">

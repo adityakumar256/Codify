@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-
+const noteRoutes = require("./router/noteRoutes")
 require("dotenv").config();
 require("./db");
 
@@ -26,6 +26,9 @@ app.use("/uploads", express.static("uploads"));
 
 app.use("/app/user", userroute);
 app.use("/app/platform", platformroute);
+
+
+app.use("/app/notes", noteRoutes)
 
 
 app.use("/app/profile", profileroute);

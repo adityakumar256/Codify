@@ -1,4 +1,4 @@
-const mongoose = require("mongoose"); // 🔥 THIS WAS MISSING
+const mongoose = require("mongoose");
 
 const profileSchema = new mongoose.Schema(
   {
@@ -19,6 +19,20 @@ const profileSchema = new mongoose.Schema(
     year: String,
     contact: String,
     description: String,
+
+    // 🔹 SOCIAL LINKS (NEW)
+    linkedinUrl: {
+      type: String,
+      default: "",
+    },
+    facebookUrl: {
+      type: String,
+      default: "",
+    },
+    instagramUrl: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );

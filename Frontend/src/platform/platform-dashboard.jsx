@@ -83,26 +83,23 @@ export default function PlatformDashboard() {
 
   /* ---------- LOADING ---------- */
  /* ---------- LOADING ---------- */
+/* ---------- LOADING ---------- */
 if (loading) {
   return (
-    <div className="min-h-screen p-8 flex gap-6 bg-neutral-950 animate-pulse">
-      
-      {/* Sidebar skeleton */}
-      <div className="w-72 h-[90vh] rounded-xl bg-neutral-800/50" />
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6
+      bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-neutral-300">
 
-      {/* Main */}
-      <div className="flex-1 space-y-6">
-        <div className="h-10 w-64 bg-neutral-800/50 rounded" />
-        <div className="grid grid-cols-3 gap-6">
-          <div className="h-28 bg-neutral-800/50 rounded-xl" />
-          <div className="h-28 bg-neutral-800/50 rounded-xl" />
-          <div className="h-28 bg-neutral-800/50 rounded-xl" />
-        </div>
-        <div className="h-64 bg-neutral-800/50 rounded-xl" />
-      </div>
+      {/* Spinner */}
+      <div className="w-14 h-14 border-4 border-neutral-700 border-t-white rounded-full animate-spin" />
+
+      {/* Animated Text */}
+      <p className="text-sm tracking-wide animate-pulse">
+        Loading dashboard…
+      </p>
     </div>
   )
 }
+
 
 
   if (!dashboard || !profile) {

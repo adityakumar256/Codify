@@ -2,11 +2,19 @@ import React from "react"
 import { Routes, Route } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute"
 
-import AuthPage from "./app/page"               // HOME
+/* 🌐 Public Pages */
+import AuthPage from "./app/page"
 import LoginPage from "./Pages/LoginPage"
 import SignupPage from "./Pages/RedSignupPage"
+
+/* 🔐 Protected Pages */
 import DashboardPage from "./app/Dashboard/page"
 import PlatformPage from "./app/platform/page"
+import NotesPage from "./app/notes/Notes"
+
+/* 📄 Public Info Pages */
+import AboutPage from "./app/about/About"
+import ContactPage from "./app/contact/Contact"
 
 export default function App() {
   return (
@@ -34,6 +42,19 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+        path="/notes"
+        element={
+          <ProtectedRoute>
+            <NotesPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* 📄 Public Info Pages */}
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/contact" element={<ContactPage />} />
     </Routes>
   )
 }

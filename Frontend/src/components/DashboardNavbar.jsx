@@ -1,27 +1,35 @@
 import { useEffect, useState } from "react"
 import { Menu, X } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+
+const NavLink = ({ children, onClick }) => (
+  <button
+    onClick={onClick}
+    className="text-muted-foreground hover:text-[#CD1C18] transition-colors relative group"
+  >
+    {children}
+    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#CD1C18] transition-all group-hover:w-full"></span>
+  </button>
+)
+
 export function DashboardNavbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 20)
     window.addEventListener("scroll", onScroll)
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
-const navigate = useNavigate()
+
   const handleLogout = () => {
-  console.log("Logging out...")
-
-  // 1️⃣ Token clear karo
-  localStorage.removeItem("token")
-  localStorage.removeItem("user")
-
-  // 2️⃣ Home page par navigate
-  navigate("/")
-}
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    navigate("/")
+  }
 
   return (
     <nav
@@ -33,7 +41,10 @@ const navigate = useNavigate()
     >
       <div className="px-6 py-3 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2 group cursor-pointer">
+        <div
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 group cursor-pointer"
+        >
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#CD1C18] to-[#9B1313] flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
             <span className="text-white font-bold text-xl">{"</>"}</span>
           </div>
@@ -42,21 +53,13 @@ const navigate = useNavigate()
           </span>
         </div>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6">
-         
-          <a href="/platform" className="text-muted-foreground hover:text-[#CD1C18] transition-colors relative group">
-            Platform
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#CD1C18] transition-all group-hover:w-full"></span>
-          </a>
-          <a href="/contact" className="text-muted-foreground hover:text-[#CD1C18] transition-colors relative group">
-            Contact Us
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#CD1C18] transition-all group-hover:w-full"></span>
-          </a>
-          <a href="/about" className="text-muted-foreground hover:text-[#CD1C18] transition-colors relative group">
-            About
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#CD1C18] transition-all group-hover:w-full"></span>
-          </a>
+          <NavLink onClick={() => navigate("/platform")}>Platform</NavLink>
+          <NavLink onClick={() => navigate("/notes")}>Notes</NavLink>
+          <NavLink onClick={() => navigate("/contact")}>Contact Us</NavLink>
+          <NavLink onClick={() => navigate("/about")}>About</NavLink>
+
           <button
             onClick={handleLogout}
             className="px-5 py-2 rounded-full bg-gradient-to-r from-[#CD1C18] to-[#9B1313] text-white hover:shadow-[0_0_30px_rgba(205,28,24,0.5)] transition-all duration-300 hover:scale-105"
@@ -66,8 +69,11 @@ const navigate = useNavigate()
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden text-foreground p-2" onClick={() => setIsMobileMenuOpen((v) => !v)}>
-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        <button
+          className="md:hidden text-foreground p-2"
+          onClick={() => setIsMobileMenuOpen((v) => !v)}
+        >
+          {isMobileMenuOpen ? <X /> : <Menu />}
         </button>
       </div>
 
@@ -75,19 +81,14 @@ const navigate = useNavigate()
       {isMobileMenuOpen && (
         <div className="md:hidden glass rounded-2xl mt-2 p-4 animate-fade-in-up">
           <div className="flex flex-col gap-4">
-          
-            <a href="/platform" className="py-2 hover:text-[#CD1C18] transition-colors">
-              Platform
-            </a>
-            <a href="/contact" className="py-2 hover:text-[#CD1C18] transition-colors">
-              Contact Us
-            </a>
-            <a href="/about" className="py-2 hover:text-[#CD1C18] transition-colors">
-              About
-            </a>
+            <NavLink onClick={() => navigate("/platform")}>Platform</NavLink>
+            <NavLink onClick={() => navigate("/notes")}>Notes</NavLink>
+            <NavLink onClick={() => navigate("/contact")}>Contact Us</NavLink>
+            <NavLink onClick={() => navigate("/about")}>About</NavLink>
+
             <button
               onClick={handleLogout}
-              className="py-2 px-4 rounded-full bg-gradient-to-r from-[#CD1C18] to-[#9B1313] text-white hover:shadow-[0_0_30px_rgba(205,28,24,0.5)] transition-all duration-300"
+              className="py-2 px-4 rounded-full bg-gradient-to-r from-[#CD1C18] to-[#9B1313] text-white"
             >
               Logout
             </button>

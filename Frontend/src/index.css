@@ -218,27 +218,36 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Reveal Animation */
+/* Reveal Animation (composable) */
 .reveal {
+  /* use CSS variables so X and Y transforms compose */
+  --reveal-tx: 0;
+  --reveal-ty: 40px;
   opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translate(var(--reveal-tx), var(--reveal-ty));
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease;
 }
 .reveal.visible {
   opacity: 1;
-  transform: translateY(0);
+  --reveal-tx: 0;
+  --reveal-ty: 0;
 }
 
-/* Horizontal reveal variants */
+/* Horizontal reveal variants — set only the X variable so it composes with Y */
 .reveal-left {
-  transform: translateX(-40px);
+  --reveal-tx: -40px;
+  --reveal-ty: 0;
 }
 .reveal-right {
-  transform: translateX(40px);
+  --reveal-tx: 40px;
+  --reveal-ty: 0;
 }
-.reveal-left.visible,
-.reveal-right.visible {
-  transform: translateX(0);
+
+/* Helpful utility: center reveal (from both sides) — optional */
+.reveal-center {
+  --reveal-tx: 0;
+  --reveal-ty: 40px;
 }
+
 
 

@@ -76,15 +76,21 @@ export default function DashboardPage() {
   const [isEditMode, setIsEditMode] = useState(false);
 
   const [verifiedStates, setVerifiedStates] = useState({});
-  const [profileData, setProfileData] = useState({
-    fullName: "",
-    college: "",
-    course: "",
-    branch: "",
-    year: "",
-    contact: "",
-    description: "",
-  });
+ const [profileData, setProfileData] = useState({
+  fullName: "",
+  college: "",
+  course: "",
+  branch: "",
+  year: "",
+  contact: "",
+  description: "",
+
+  // 🔹 SOCIAL LINKS
+  linkedinUrl: "",
+  facebookUrl: "",
+  instagramUrl: "",
+});
+
 
   const [popup, setPopup] = useState(null);
   const [platformUsernames, setPlatformUsernames] = useState({});
@@ -164,15 +170,21 @@ export default function DashboardPage() {
         setUserEmail(data.email || "");
 
         // 🔹 text data
-        setProfileData({
-          fullName: data.name || "",
-          college: data.college || "",
-          course: data.course || "",
-          branch: data.branch || "",
-          year: data.year || "",
-          contact: data.contact || "",
-          description: data.description || "",
-        });
+       setProfileData({
+  fullName: data.name || "",
+  college: data.college || "",
+  course: data.course || "",
+  branch: data.branch || "",
+  year: data.year || "",
+  contact: data.contact || "",
+  description: data.description || "",
+
+  // 🔹 SOCIAL LINKS
+  linkedinUrl: data.linkedinUrl || "",
+  facebookUrl: data.facebookUrl || "",
+  instagramUrl: data.instagramUrl || "",
+});
+
 
         // 🔥 MOST IMPORTANT: image reload
         if (data.photo) {
@@ -383,11 +395,17 @@ export default function DashboardPage() {
       }
 
       formData.append("college", profileData.college);
-      formData.append("course", profileData.course);
-      formData.append("branch", profileData.branch);
-      formData.append("year", profileData.year);
-      formData.append("contact", profileData.contact);
-      formData.append("description", profileData.description);
+formData.append("course", profileData.course);
+formData.append("branch", profileData.branch);
+formData.append("year", profileData.year);
+formData.append("contact", profileData.contact);
+formData.append("description", profileData.description);
+
+// 🔹 SOCIAL
+formData.append("linkedinUrl", profileData.linkedinUrl);
+formData.append("facebookUrl", profileData.facebookUrl);
+formData.append("instagramUrl", profileData.instagramUrl);
+
 
       const res = await fetch("http://localhost:7025/app/profile/save", {
         method: "POST",
@@ -693,6 +711,61 @@ export default function DashboardPage() {
                     Short Description
                   </label>
                 </div>
+                <div className="relative">
+  <Input
+    placeholder=" "
+    value={profileData.linkedinUrl}
+    disabled={!isEditMode}
+    onChange={(e) =>
+      setProfileData((prev) => ({
+        ...prev,
+        linkedinUrl: e.target.value,
+      }))
+    }
+    className="peer bg-background/50 border-[#CD1C18]/30 focus:border-[#CD1C18] h-12 pt-6"
+  />
+
+  <label className="absolute left-3 top-2 text-xs text-muted-foreground peer-focus:text-[#CD1C18] transition-colors">
+    LinkedIn Profile URL
+  </label>
+</div>
+<div className="relative">
+  <Input
+    placeholder=" "
+    value={profileData.facebookUrl}
+    disabled={!isEditMode}
+    onChange={(e) =>
+      setProfileData((prev) => ({
+        ...prev,
+        facebookUrl: e.target.value,
+      }))
+    }
+    className="peer bg-background/50 border-[#CD1C18]/30 focus:border-[#CD1C18] h-12 pt-6"
+  />
+
+  <label className="absolute left-3 top-2 text-xs text-muted-foreground peer-focus:text-[#CD1C18] transition-colors">
+    Facebook Profile URL
+  </label>
+</div>
+<div className="relative">
+  <Input
+    placeholder=" "
+    value={profileData.instagramUrl}
+    disabled={!isEditMode}
+    onChange={(e) =>
+      setProfileData((prev) => ({
+        ...prev,
+        instagramUrl: e.target.value,
+      }))
+    }
+    className="peer bg-background/50 border-[#CD1C18]/30 focus:border-[#CD1C18] h-12 pt-6"
+  />
+
+  <label className="absolute left-3 top-2 text-xs text-muted-foreground peer-focus:text-[#CD1C18] transition-colors">
+    Instagram Profile URL
+  </label>
+</div>
+
 
                 <Button
                   onClick={handleProfileSave}

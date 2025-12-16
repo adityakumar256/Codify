@@ -12,7 +12,7 @@ const saveProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // 🔥 ADD MISSING FIELDS HERE
+    // 🔥 ADD SOCIAL URLS HERE 👇
     const {
       college,
       course,
@@ -20,6 +20,11 @@ const saveProfile = async (req, res) => {
       year,
       contact,
       description,
+
+      // ✅ NEW
+      linkedinUrl,
+      facebookUrl,
+      instagramUrl,
     } = req.body;
 
     let profile = await Profile.findOne({ userId });
@@ -31,13 +36,18 @@ const saveProfile = async (req, res) => {
     profile.name = user.name;
     profile.email = user.email;
 
-    // 🔥 manual fields (IMPORTANT FIX)
+    // 🔥 manual fields
     profile.college = college ?? profile.college;
     profile.course = course ?? profile.course;
     profile.branch = branch ?? profile.branch;
     profile.year = year ?? profile.year;
-    profile.contact = contact ?? profile.contact; // ✅ THIS WAS MISSING
+    profile.contact = contact ?? profile.contact;
     profile.description = description ?? profile.description;
+
+    // 🔥 SOCIAL LINKS (SAFE UPDATE)
+    profile.linkedinUrl = linkedinUrl ?? profile.linkedinUrl;
+    profile.facebookUrl = facebookUrl ?? profile.facebookUrl;
+    profile.instagramUrl = instagramUrl ?? profile.instagramUrl;
 
     // 🔥 photo (multer)
     if (req.file) {
@@ -56,7 +66,7 @@ const saveProfile = async (req, res) => {
   }
 };
 
-// 🔹 GET PROFILE
+// 🔹 GET PROFILE (NO CHANGE NEEDED ✅)
 const getProfile = async (req, res) => {
   try {
     const userId = req.user.userId;

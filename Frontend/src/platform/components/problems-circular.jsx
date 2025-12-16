@@ -1,46 +1,46 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { ProfileLinks } from "./profile-links"
+import { useEffect, useState } from "react";
+import { ProfileLinks } from "./profile-links";
 
 /* ---------- HELPERS ---------- */
-const hasValue = (v) => v !== null && v !== undefined && v !== 0
+const hasValue = (v) => v !== null && v !== undefined && v !== 0;
 
 export function ProblemsCircular({ platforms, isLoaded, isDarkBg }) {
   // 🔐 SAFETY
-  if (!platforms || typeof platforms !== "object") return null
+  if (!platforms || typeof platforms !== "object") return null;
 
   // OBJECT → ARRAY
-  const list = Object.values(platforms)
+  const list = Object.values(platforms);
 
   // TOTAL SOLVED
   const totalSolved = list.reduce(
     (sum, p) => sum + (p.stats?.totalSolved || 0),
     0
-  )
+  );
 
-  const hasData = hasValue(totalSolved)
-  const [progress, setProgress] = useState(0)
+  const hasData = hasValue(totalSolved);
+  const [progress, setProgress] = useState(0);
 
-  /* ---------- ANIMATION ---------- */
+  // Ensure hooks are called unconditionally
   useEffect(() => {
-    if (!isLoaded || !hasData) return
+    if (!isLoaded || !hasData) return;
 
-    let curr = 0
+    let curr = 0;
     const interval = setInterval(() => {
-      curr += 2
-      setProgress(Math.min(curr, 100))
-      if (curr >= 100) clearInterval(interval)
-    }, 20)
+      curr += 2;
+      setProgress(Math.min(curr, 100));
+      if (curr >= 100) clearInterval(interval);
+    }, 20);
 
-    return () => clearInterval(interval)
-  }, [isLoaded, hasData])
+    return () => clearInterval(interval);
+  }, [isLoaded, hasData]);
 
-  if (!hasData) return null
+  if (!hasData) return null;
 
-  const RADIUS = 54
-  const CIRC = 2 * Math.PI * RADIUS
-  const offset = CIRC * (1 - progress / 100)
+  const RADIUS = 54;
+  const CIRC = 2 * Math.PI * RADIUS;
+  const offset = CIRC * (1 - progress / 100);
 
   return (
     <aside
@@ -53,9 +53,7 @@ export function ProblemsCircular({ platforms, isLoaded, isDarkBg }) {
         }
       `}
     >
-      <h2 className="text-xl font-bold mb-6">
-        Problems Solved
-      </h2>
+      <h2 className="text-xl font-bold mb-6">Problems Solved</h2>
 
       {/* ✅ PROFILE LINKS */}
       <ProfileLinks platforms={platforms} isDarkBg={isDarkBg} />
@@ -86,12 +84,8 @@ export function ProblemsCircular({ platforms, isLoaded, isDarkBg }) {
           </svg>
 
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-4xl font-bold">
-              {totalSolved}
-            </div>
-            <div className="text-sm text-neutral-400">
-              Total Solved
-            </div>
+            <div className="text-4xl font-bold">{totalSolved}</div>
+            <div className="text-sm text-neutral-400">Total Solved</div>
           </div>
         </div>
 
@@ -103,7 +97,7 @@ export function ProblemsCircular({ platforms, isLoaded, isDarkBg }) {
         </div>
       </div>
     </aside>
-  )
+  );
 }
 
 /* ---------- SMALL INFO ROW ---------- */
@@ -113,5 +107,5 @@ function InfoRow({ label, value }) {
       <span className="text-neutral-400">{label}</span>
       <span className="font-semibold">{value}</span>
     </div>
-  )
+  );
 }
