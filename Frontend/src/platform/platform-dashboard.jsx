@@ -10,6 +10,8 @@ import { WelcomeHeader } from "./components/welcome-header"
 
 /* ---------- HELPERS ---------- */
 const hasValue = (v) => v !== null && v !== undefined && v !== 0
+const CACHE_KEY = "dashboard_cache"
+const CACHE_TIME = 5 * 60 * 1000 // 5 minutes
 
 export default function PlatformDashboard() {
   const [isLoaded, setIsLoaded] = useState(false)
@@ -22,22 +24,52 @@ export default function PlatformDashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem("token")
+    if (!token) return
 
+    /* ---------- CHECK CACHE ---------- */
+    const cached = localStorage.getItem(CACHE_KEY)
+    if (cached) {
+      const parsed = JSON.parse(cached)
+      const isFresh = Date.now() - parsed.time < CACHE_TIME
+
+      if (isFresh) {
+        setDashboard(parsed.dashboard)
+        setProfile(parsed.profile)
+        setLoading(false)
+        setIsLoaded(true)
+        return
+      }
+    }
+
+    /* ---------- FETCH DATA (FAST) ---------- */
     const fetchData = async () => {
       try {
-        /* ---------- DASHBOARD DATA ---------- */
-        const dashRes = await fetch("http://localhost:7025/app/dashboard", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        const dashData = await dashRes.json()
-        setDashboard(dashData)
+        const [dashRes, profileRes] = await Promise.all([
+          fetch("http://localhost:7025/app/dashboard", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:7025/app/profile/get", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ])
 
-        /* ---------- PROFILE DATA ---------- */
-        const profileRes = await fetch("http://localhost:7025/app/profile/get", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        const profileData = await profileRes.json()
+        const [dashData, profileData] = await Promise.all([
+          dashRes.json(),
+          profileRes.json(),
+        ])
+
+        setDashboard(dashData)
         setProfile(profileData)
+
+        /* ---------- SAVE CACHE ---------- */
+        localStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({
+            dashboard: dashData,
+            profile: profileData,
+            time: Date.now(),
+          })
+        )
       } catch (err) {
         console.error("Dashboard fetch failed", err)
       } finally {
@@ -50,13 +82,28 @@ export default function PlatformDashboard() {
   }, [])
 
   /* ---------- LOADING ---------- */
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-neutral-400">
-        Loading dashboard…
+ /* ---------- LOADING ---------- */
+if (loading) {
+  return (
+    <div className="min-h-screen p-8 flex gap-6 bg-neutral-950 animate-pulse">
+      
+      {/* Sidebar skeleton */}
+      <div className="w-72 h-[90vh] rounded-xl bg-neutral-800/50" />
+
+      {/* Main */}
+      <div className="flex-1 space-y-6">
+        <div className="h-10 w-64 bg-neutral-800/50 rounded" />
+        <div className="grid grid-cols-3 gap-6">
+          <div className="h-28 bg-neutral-800/50 rounded-xl" />
+          <div className="h-28 bg-neutral-800/50 rounded-xl" />
+          <div className="h-28 bg-neutral-800/50 rounded-xl" />
+        </div>
+        <div className="h-64 bg-neutral-800/50 rounded-xl" />
       </div>
-    )
-  }
+    </div>
+  )
+}
+
 
   if (!dashboard || !profile) {
     return (
@@ -66,25 +113,26 @@ export default function PlatformDashboard() {
     )
   }
 
-  /* ---------- FILTER PLATFORMS (ONLY DATA WALA) ---------- */
-  const visiblePlatforms = dashboard.platforms?.filter(
+  /* ---------- PLATFORMS (OBJECT → ARRAY) ---------- */
+  const platformsArray = Object.values(dashboard.platforms || {})
+
+  const visiblePlatforms = platformsArray.filter(
     (p) =>
       hasValue(p.stats?.totalSolved) ||
       hasValue(p.stats?.rating) ||
       hasValue(p.extra?.repositories)
   )
 
-  /* ---------- CHECK IF ANY RATING EXISTS ---------- */
-  const hasAnyRating = dashboard.platforms?.some((p) =>
+  const hasAnyRating = platformsArray.some((p) =>
     hasValue(p.stats?.rating)
   )
 
   return (
     <div
-      className={`min-h-screen text-white relative overflow-hidden transition-colors duration-500 ${
+      className={`min-h-screen relative overflow-hidden transition-colors duration-500 ${
         isDarkBg
-          ? "bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950"
-          : "bg-gradient-to-br from-white via-neutral-50 to-neutral-100"
+          ? "bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-white"
+          : "bg-gradient-to-br from-white via-neutral-50 to-neutral-100 text-neutral-900"
       }`}
     >
       {/* ================= THEME TOGGLE ================= */}
@@ -106,11 +154,8 @@ export default function PlatformDashboard() {
 
         {/* ================= MAIN CONTENT ================= */}
         <main className="flex-1 ml-80 mr-96 p-8 overflow-y-auto space-y-6">
-          
-  {/* ---------- WELCOME HEADER ---------- */}
-  <WelcomeHeader isLoaded={isLoaded} />
+          <WelcomeHeader isLoaded={isLoaded} />
 
-          {/* ---------- TOP STATS ---------- */}
           <StatsCards
             totalQuestions={dashboard.totalSolved}
             activeDays={null}
@@ -119,17 +164,15 @@ export default function PlatformDashboard() {
             isDarkBg={isDarkBg}
           />
 
-          {/* ---------- PLATFORMS ---------- */}
           <PlatformStats
             platforms={visiblePlatforms}
             isLoaded={isLoaded}
             isDarkBg={isDarkBg}
           />
 
-          {/* ---------- RATING GRAPH (ONLY IF DATA EXISTS) ---------- */}
           {hasAnyRating && (
             <RatingGraph
-              rating={dashboard.platforms}
+              rating={platformsArray}
               isLoaded={isLoaded}
               isDarkBg={isDarkBg}
             />
@@ -138,13 +181,11 @@ export default function PlatformDashboard() {
 
         {/* ================= RIGHT PANEL ================= */}
         <ProblemsCircular
-          problems={{
-            fundamentals: { total: dashboard.totalSolved },
-          }}
+          platforms={dashboard.platforms}
           isLoaded={isLoaded}
           isDarkBg={isDarkBg}
         />
       </div>
     </div>
   )
-} 
+}

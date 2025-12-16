@@ -1,14 +1,25 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { ProfileLinks } from "./profile-links"
 
 /* ---------- HELPERS ---------- */
 const hasValue = (v) => v !== null && v !== undefined && v !== 0
 
-export function ProblemsCircular({ problems, isLoaded, isDarkBg }) {
-  const totalSolved = problems?.fundamentals?.total ?? 0
-  const hasData = hasValue(totalSolved)
+export function ProblemsCircular({ platforms, isLoaded, isDarkBg }) {
+  // 🔐 SAFETY
+  if (!platforms || typeof platforms !== "object") return null
 
+  // OBJECT → ARRAY
+  const list = Object.values(platforms)
+
+  // TOTAL SOLVED
+  const totalSolved = list.reduce(
+    (sum, p) => sum + (p.stats?.totalSolved || 0),
+    0
+  )
+
+  const hasData = hasValue(totalSolved)
   const [progress, setProgress] = useState(0)
 
   /* ---------- ANIMATION ---------- */
@@ -25,7 +36,6 @@ export function ProblemsCircular({ problems, isLoaded, isDarkBg }) {
     return () => clearInterval(interval)
   }, [isLoaded, hasData])
 
-  /* ---------- NOTHING TO SHOW ---------- */
   if (!hasData) return null
 
   const RADIUS = 54
@@ -43,9 +53,12 @@ export function ProblemsCircular({ problems, isLoaded, isDarkBg }) {
         }
       `}
     >
-      <h2 className="text-xl font-bold mb-8">
+      <h2 className="text-xl font-bold mb-6">
         Problems Solved
       </h2>
+
+      {/* ✅ PROFILE LINKS */}
+      <ProfileLinks platforms={platforms} isDarkBg={isDarkBg} />
 
       {/* ---------- MAIN CIRCLE ---------- */}
       <div className="flex flex-col items-center justify-center mt-10">
@@ -82,7 +95,7 @@ export function ProblemsCircular({ problems, isLoaded, isDarkBg }) {
           </div>
         </div>
 
-        {/* ---------- INFO ---------- */}
+        {/* ---------- INFO (AB WAPAS ADD HO GAYA) ---------- */}
         <div className="w-full space-y-3 mt-6">
           <InfoRow label="Strongest Area" value="DSA / Problem Solving" />
           <InfoRow label="Primary Platform" value="LeetCode" />
@@ -93,7 +106,7 @@ export function ProblemsCircular({ problems, isLoaded, isDarkBg }) {
   )
 }
 
-/* ---------- SMALL ROW ---------- */
+/* ---------- SMALL INFO ROW ---------- */
 function InfoRow({ label, value }) {
   return (
     <div className="flex justify-between text-sm">
