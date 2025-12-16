@@ -178,7 +178,7 @@ if (loading) {
 
         {/* ================= RIGHT PANEL ================= */}
         <ProblemsCircular
-          platforms={dashboard.platforms}
+         platforms={platformsArray}
           isLoaded={isLoaded}
           isDarkBg={isDarkBg}
         />

@@ -26,7 +26,8 @@ const getDashboard = async (req, res) => {
       })
     }
 
-    const platforms = []
+    const platforms = {}   // ✅ SAHI
+
     let totalSolved = 0
 
     /* ========= LEETCODE ========= */
@@ -39,7 +40,8 @@ const getDashboard = async (req, res) => {
           profileUrl: `https://leetcode.com/${doc.leetcode}`,
           stats: raw,
         })
-        platforms.push(p)
+       platforms.leetcode = p
+
         totalSolved += p.stats.totalSolved || 0
       }
     }
@@ -54,7 +56,9 @@ const getDashboard = async (req, res) => {
           profileUrl: `https://www.codechef.com/users/${doc.codechef}`,
           stats: raw,
         })
-        platforms.push(p)
+      platforms.codechef = p
+
+
       }
     }
 
@@ -68,7 +72,7 @@ const getDashboard = async (req, res) => {
           profileUrl: `https://codeforces.com/profile/${doc.codeforces}`,
           stats: raw,
         })
-        platforms.push(p)
+       platforms.codeforces = p
       }
     }
 
@@ -82,7 +86,8 @@ const getDashboard = async (req, res) => {
           profileUrl: `https://www.hackerrank.com/${doc.hackerrank}`,
           stats: raw,
         })
-        platforms.push(p)
+       platforms.hackerrank = p
+
       }
     }
 
@@ -102,14 +107,16 @@ const getDashboard = async (req, res) => {
         },
       })
 
-      platforms.push(p)
+     platforms.github = p
+
     }
 
     return res.json({
-      user: req.user,
-      totalSolved,
-      platforms,
-    })
+  user: req.user,
+  totalSolved,
+  platforms,   // ✅ OBJECT
+})
+
   } catch (err) {
     console.error("Dashboard Error:", err)
     res.status(500).json({ message: "Dashboard failed" })
