@@ -33,7 +33,7 @@ export function ProfileSidebar({ user, platforms = [], isLoaded, isDarkBg }) {
           <img
             src={
               user.photo
-                ? `http://localhost:7025${user.photo}`
+                ? `https://codify-pia9.onrender.com${user.photo}`
                 : "/placeholder.svg"
             }
             alt={user.name || "profile"}

@@ -45,10 +45,10 @@ export default function PlatformDashboard() {
     const fetchData = async () => {
       try {
         const [dashRes, profileRes] = await Promise.all([
-          fetch("http://localhost:7025/app/dashboard", {
+          fetch("https://codify-pia9.onrender.com/app/dashboard", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:7025/app/profile/get", {
+          fetch("https://codify-pia9.onrender.com/app/profile/get", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ])

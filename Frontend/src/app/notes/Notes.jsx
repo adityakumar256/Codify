@@ -33,7 +33,7 @@ export default function NotesPage() {
         setError(null)
 
         const res = await fetch(
-          "http://localhost:7025/app/notes/getnotes",
+          "https://codify-pia9.onrender.com/app/notes/getnotes",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

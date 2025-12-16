@@ -158,7 +158,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:7025/app/profile/get", {
+        const res = await fetch("https://codify-pia9.onrender.com/app/profile/get", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -188,7 +188,7 @@ export default function DashboardPage() {
 
         // 🔥 MOST IMPORTANT: image reload
         if (data.photo) {
-          setProfileImage(`http://localhost:7025${data.photo}`);
+          setProfileImage(`https://codify-pia9.onrender.com${data.photo}`);
         }
       } catch (err) {
         console.error("Profile fetch error", err);
@@ -238,7 +238,7 @@ export default function DashboardPage() {
     try {
       setVerifyingStates((prev) => ({ ...prev, [platformName]: true }));
 
-      const res = await fetch("http://localhost:7025/app/platform/verify", {
+      const res = await fetch("https://codify-pia9.onrender.com/app/platform/verify", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -293,7 +293,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchPlatforms = async () => {
       try {
-        const res = await fetch("http://localhost:7025/app/platform/platdata", {
+        const res = await fetch("https://codify-pia9.onrender.com/app/platform/platdata", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -367,7 +367,7 @@ export default function DashboardPage() {
   });
 
   try {
-    const res = await fetch("http://localhost:7025/app/platform/platlogin", {
+    const res = await fetch("https://codify-pia9.onrender.com/app/platform/platlogin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -407,7 +407,7 @@ formData.append("facebookUrl", profileData.facebookUrl);
 formData.append("instagramUrl", profileData.instagramUrl);
 
 
-      const res = await fetch("http://localhost:7025/app/profile/save", {
+      const res = await fetch("https://codify-pia9.onrender.com/app/profile/save", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
