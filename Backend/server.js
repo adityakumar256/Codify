@@ -9,7 +9,7 @@ const app = express();
    🔥 CORS CONFIG (FINAL)
    ======================= */
 const allowedOrigins = [
-  "http://localhost:5173",            // local frontend
+  
   "https://codify-peach.vercel.app",   // production frontend
 ];
 
