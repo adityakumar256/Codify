@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-/* ================= PLATFORM LIST ================= */
+/* ================= PLATFORMS ================= */
 
 const platforms = [
   { name: "LeetCode", key: "leetcode" },
@@ -27,7 +27,7 @@ export default function DashboardPage() {
   const [userEmail, setUserEmail] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
 
-  /* ================= PROFILE STATE ================= */
+  /* ================= PROFILE ================= */
 
   const [profileData, setProfileData] = useState({
     name: "",
@@ -42,7 +42,7 @@ export default function DashboardPage() {
     instagramUrl: "",
   });
 
-  /* ================= PLATFORM STATE ================= */
+  /* ================= PLATFORM DATA ================= */
 
   const [platformData, setPlatformData] = useState({
     leetcode: {
@@ -93,34 +93,30 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      try {
-        const res = await fetch(
-          "https://codify-pia9.onrender.com/app/profile/get",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+      const res = await fetch(
+        "https://codify-pia9.onrender.com/app/profile/get",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-        const data = await res.json();
+      const data = await res.json();
 
-        setUserEmail(data.email || "");
-        setProfileData({
-          name: data.name || "",
-          college: data.college || "",
-          course: data.course || "",
-          branch: data.branch || "",
-          year: data.year || "",
-          contact: data.contact || "",
-          description: data.description || "",
-          linkedinUrl: data.linkedinUrl || "",
-          facebookUrl: data.facebookUrl || "",
-          instagramUrl: data.instagramUrl || "",
-        });
-      } catch (err) {
-        console.error("Profile fetch error", err);
-      }
+      setUserEmail(data.email || "");
+      setProfileData({
+        name: data.name || "",
+        college: data.college || "",
+        course: data.course || "",
+        branch: data.branch || "",
+        year: data.year || "",
+        contact: data.contact || "",
+        description: data.description || "",
+        linkedinUrl: data.linkedinUrl || "",
+        facebookUrl: data.facebookUrl || "",
+        instagramUrl: data.instagramUrl || "",
+      });
     };
 
     fetchProfile();
@@ -138,6 +134,7 @@ export default function DashboardPage() {
           },
         }
       );
+
       const data = await res.json();
 
       setPlatformData((prev) => ({
@@ -213,63 +210,24 @@ export default function DashboardPage() {
           <h2 className="text-2xl font-bold mb-4">My Profile</h2>
 
           <div className="grid md:grid-cols-2 gap-4">
-            <Input
-              placeholder="Name"
-              value={profileData.name}
-              disabled={!isEditMode}
-              onChange={(e) =>
-                setProfileData((p) => ({ ...p, name: e.target.value }))
-              }
-            />
+            <Input placeholder="Name" value={profileData.name} disabled={!isEditMode}
+              onChange={(e)=>setProfileData(p=>({...p,name:e.target.value}))}/>
             <Input placeholder="Email" value={userEmail} disabled />
-            <Input
-              placeholder="College"
-              value={profileData.college}
-              disabled={!isEditMode}
-              onChange={(e) =>
-                setProfileData((p) => ({ ...p, college: e.target.value }))
-              }
-            />
-            <Input
-              placeholder="Course"
-              value={profileData.course}
-              disabled={!isEditMode}
-              onChange={(e) =>
-                setProfileData((p) => ({ ...p, course: e.target.value }))
-              }
-            />
-            <Input
-              placeholder="Branch"
-              value={profileData.branch}
-              disabled={!isEditMode}
-              onChange={(e) =>
-                setProfileData((p) => ({ ...p, branch: e.target.value }))
-              }
-            />
-            <Input
-              placeholder="Year"
-              value={profileData.year}
-              disabled={!isEditMode}
-              onChange={(e) =>
-                setProfileData((p) => ({ ...p, year: e.target.value }))
-              }
-            />
+            <Input placeholder="College" value={profileData.college} disabled={!isEditMode}
+              onChange={(e)=>setProfileData(p=>({...p,college:e.target.value}))}/>
+            <Input placeholder="Course" value={profileData.course} disabled={!isEditMode}
+              onChange={(e)=>setProfileData(p=>({...p,course:e.target.value}))}/>
+            <Input placeholder="Branch" value={profileData.branch} disabled={!isEditMode}
+              onChange={(e)=>setProfileData(p=>({...p,branch:e.target.value}))}/>
+            <Input placeholder="Year" value={profileData.year} disabled={!isEditMode}
+              onChange={(e)=>setProfileData(p=>({...p,year:e.target.value}))}/>
           </div>
 
-          <Textarea
-            className="mt-4"
-            placeholder="Description"
-            value={profileData.description}
-            disabled={!isEditMode}
-            onChange={(e) =>
-              setProfileData((p) => ({
-                ...p,
-                description: e.target.value,
-              }))
-            }
-          />
+          <Textarea className="mt-4" placeholder="Description"
+            value={profileData.description} disabled={!isEditMode}
+            onChange={(e)=>setProfileData(p=>({...p,description:e.target.value}))}/>
 
-          <div className="mt-4 flex gap-3">
+          <div className="mt-4">
             {isEditMode ? (
               <Button onClick={handleProfileSave}>Save Profile</Button>
             ) : (
@@ -290,109 +248,30 @@ export default function DashboardPage() {
               <div key={p.key} className="glass p-5 rounded-xl border">
                 <h3 className="text-xl font-bold mb-3">{p.name}</h3>
 
-              {platform.name === "LeetCode" && (
-  <>
-    <Input
-      placeholder="Username"
-      value={platformData.LeetCode.username}
-      disabled={!platformData.LeetCode.isEditing}
-      onChange={(e) =>
-        setPlatformData(p => ({
-          ...p,
-          LeetCode: { ...p.LeetCode, username: e.target.value }
-        }))
-      }
-    />
-
-    <Input placeholder="Total Solved"
-      value={platformData.LeetCode.totalSolved}
-      disabled={!platformData.LeetCode.isEditing}
-      onChange={(e)=>setPlatformData(p=>({...p,LeetCode:{...p.LeetCode,totalSolved:e.target.value}}))}
-    />
-
-    <Input placeholder="Easy Problems"
-      value={platformData.LeetCode.easy}
-      disabled={!platformData.LeetCode.isEditing}
-      onChange={(e)=>setPlatformData(p=>({...p,LeetCode:{...p.LeetCode,easy:e.target.value}}))}
-    />
-
-    <Input placeholder="Medium Problems"
-      value={platformData.LeetCode.medium}
-      disabled={!platformData.LeetCode.isEditing}
-      onChange={(e)=>setPlatformData(p=>({...p,LeetCode:{...p.LeetCode,medium:e.target.value}}))}
-    />
-
-    <Input placeholder="Hard Problems"
-      value={platformData.LeetCode.hard}
-      disabled={!platformData.LeetCode.isEditing}
-      onChange={(e)=>setPlatformData(p=>({...p,LeetCode:{...p.LeetCode,hard:e.target.value}}))}
-    />
-
-    <Input placeholder="Rating"
-      value={platformData.LeetCode.rating}
-      disabled={!platformData.LeetCode.isEditing}
-      onChange={(e)=>setPlatformData(p=>({...p,LeetCode:{...p.LeetCode,rating:e.target.value}}))}
-    />
-  </>
-)}
-{platform.name === "GeeksforGeeks" && (
-  <>
-    <Input placeholder="Username" value={platformData.GeeksforGeeks.username} />
-    <Input placeholder="Solved Problems" value={platformData.GeeksforGeeks.solved} />
-    <Input placeholder="Institute Rank" value={platformData.GeeksforGeeks.instituteRank} />
-    <Input placeholder="Score" value={platformData.GeeksforGeeks.score} />
-  </>
-)}
-{platform.name === "CodeChef" && (
-  <>
-    <Input placeholder="Username" value={platformData.CodeChef.username} />
-    <Input placeholder="Rating" value={platformData.CodeChef.rating} />
-    <Input placeholder="Stars" value={platformData.CodeChef.stars} />
-  </>
-)}
-{platform.name === "Codeforces" && (
-  <>
-    <Input placeholder="Username" value={platformData.Codeforces.username} />
-    <Input placeholder="Rating" value={platformData.Codeforces.rating} />
-    <Input placeholder="Max Rating" value={platformData.Codeforces.maxRating} />
-    <Input placeholder="Rank" value={platformData.Codeforces.rank} />
-  </>
-)}
-{platform.name === "HackerRank" && (
-  <>
-    <Input placeholder="Username" value={platformData.HackerRank.username} />
-    <Input placeholder="Badges" value={platformData.HackerRank.badges} />
-    <Input placeholder="Stars" value={platformData.HackerRank.stars} />
-  </>
-)}
-
-{platform.name === "GitHub" && (
-  <>
-    <Input placeholder="Username" value={platformData.GitHub.username} />
-    <Input placeholder="Repositories" value={platformData.GitHub.repos} />
-    <Input placeholder="Followers" value={platformData.GitHub.followers} />
-    <Input placeholder="Following" value={platformData.GitHub.following} />
-  </>
-)}
+                {Object.keys(d).filter(k=>k!=="isEditing").map((field)=>(
+                  <Input
+                    key={field}
+                    placeholder={field}
+                    value={d[field] || ""}
+                    disabled={!d.isEditing}
+                    onChange={(e)=>setPlatformData(prev=>({
+                      ...prev,
+                      [p.key]:{...prev[p.key],[field]:e.target.value}
+                    }))}
+                    className="mb-2"
+                  />
+                ))}
 
                 {d.isEditing ? (
-                  <Button
-                    className="w-full"
-                    onClick={() => handlePlatformSave(p.key)}
-                  >
+                  <Button className="w-full" onClick={()=>handlePlatformSave(p.key)}>
                     Save
                   </Button>
                 ) : (
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() =>
-                      setPlatformData((prev) => ({
-                        ...prev,
-                        [p.key]: { ...prev[p.key], isEditing: true },
-                      }))
-                    }
-                  >
+                  <Button variant="outline" className="w-full"
+                    onClick={()=>setPlatformData(prev=>({
+                      ...prev,
+                      [p.key]:{...prev[p.key],isEditing:true}
+                    }))}>
                     Edit
                   </Button>
                 )}
@@ -404,10 +283,8 @@ export default function DashboardPage() {
 
       {/* ================= CTA ================= */}
       <section className="px-6 mb-20 text-center">
-        <Button
-          onClick={() => navigate("/platform")}
-          className="bg-gradient-to-r from-[#CD1C18] to-[#9B1313] h-14 px-8 text-lg"
-        >
+        <Button onClick={() => navigate("/platform")}
+          className="bg-gradient-to-r from-[#CD1C18] to-[#9B1313] h-14 px-8 text-lg">
           Go to Platform <ArrowRight className="ml-2" />
         </Button>
       </section>
