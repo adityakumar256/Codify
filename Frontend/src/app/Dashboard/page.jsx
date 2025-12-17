@@ -100,7 +100,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchPlatforms = async () => {
-      const res = await fetch("https://codify-pia9.onrender.com/api/platform", {
+      const res = await fetch("https://codify-pia9.onrender.com/app/platform", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       const data = await res.json();
@@ -125,7 +125,7 @@ export default function DashboardPage() {
     const key = platformKeyMap[platformName];
     const payload = platformData[platformName];
 
-    await fetch("https://codify-pia9.onrender.com/api/platform/save", {
+    await fetch("https://codify-pia9.onrender.com/app/platform/save", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
