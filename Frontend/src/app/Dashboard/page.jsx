@@ -290,26 +290,90 @@ export default function DashboardPage() {
               <div key={p.key} className="glass p-5 rounded-xl border">
                 <h3 className="text-xl font-bold mb-3">{p.name}</h3>
 
-                {Object.keys(d)
-                  .filter((k) => k !== "isEditing")
-                  .map((field) => (
-                    <Input
-                      key={field}
-                      placeholder={field}
-                      value={d[field] || ""}
-                      disabled={!d.isEditing}
-                      onChange={(e) =>
-                        setPlatformData((prev) => ({
-                          ...prev,
-                          [p.key]: {
-                            ...prev[p.key],
-                            [field]: e.target.value,
-                          },
-                        }))
-                      }
-                      className="mb-2"
-                    />
-                  ))}
+              {platform.name === "LeetCode" && (
+  <>
+    <Input
+      placeholder="Username"
+      value={platformData.LeetCode.username}
+      disabled={!platformData.LeetCode.isEditing}
+      onChange={(e) =>
+        setPlatformData(p => ({
+          ...p,
+          LeetCode: { ...p.LeetCode, username: e.target.value }
+        }))
+      }
+    />
+
+    <Input placeholder="Total Solved"
+      value={platformData.LeetCode.totalSolved}
+      disabled={!platformData.LeetCode.isEditing}
+      onChange={(e)=>setPlatformData(p=>({...p,LeetCode:{...p.LeetCode,totalSolved:e.target.value}}))}
+    />
+
+    <Input placeholder="Easy Problems"
+      value={platformData.LeetCode.easy}
+      disabled={!platformData.LeetCode.isEditing}
+      onChange={(e)=>setPlatformData(p=>({...p,LeetCode:{...p.LeetCode,easy:e.target.value}}))}
+    />
+
+    <Input placeholder="Medium Problems"
+      value={platformData.LeetCode.medium}
+      disabled={!platformData.LeetCode.isEditing}
+      onChange={(e)=>setPlatformData(p=>({...p,LeetCode:{...p.LeetCode,medium:e.target.value}}))}
+    />
+
+    <Input placeholder="Hard Problems"
+      value={platformData.LeetCode.hard}
+      disabled={!platformData.LeetCode.isEditing}
+      onChange={(e)=>setPlatformData(p=>({...p,LeetCode:{...p.LeetCode,hard:e.target.value}}))}
+    />
+
+    <Input placeholder="Rating"
+      value={platformData.LeetCode.rating}
+      disabled={!platformData.LeetCode.isEditing}
+      onChange={(e)=>setPlatformData(p=>({...p,LeetCode:{...p.LeetCode,rating:e.target.value}}))}
+    />
+  </>
+)}
+{platform.name === "GeeksforGeeks" && (
+  <>
+    <Input placeholder="Username" value={platformData.GeeksforGeeks.username} />
+    <Input placeholder="Solved Problems" value={platformData.GeeksforGeeks.solved} />
+    <Input placeholder="Institute Rank" value={platformData.GeeksforGeeks.instituteRank} />
+    <Input placeholder="Score" value={platformData.GeeksforGeeks.score} />
+  </>
+)}
+{platform.name === "CodeChef" && (
+  <>
+    <Input placeholder="Username" value={platformData.CodeChef.username} />
+    <Input placeholder="Rating" value={platformData.CodeChef.rating} />
+    <Input placeholder="Stars" value={platformData.CodeChef.stars} />
+  </>
+)}
+{platform.name === "Codeforces" && (
+  <>
+    <Input placeholder="Username" value={platformData.Codeforces.username} />
+    <Input placeholder="Rating" value={platformData.Codeforces.rating} />
+    <Input placeholder="Max Rating" value={platformData.Codeforces.maxRating} />
+    <Input placeholder="Rank" value={platformData.Codeforces.rank} />
+  </>
+)}
+{platform.name === "HackerRank" && (
+  <>
+    <Input placeholder="Username" value={platformData.HackerRank.username} />
+    <Input placeholder="Badges" value={platformData.HackerRank.badges} />
+    <Input placeholder="Stars" value={platformData.HackerRank.stars} />
+  </>
+)}
+
+{platform.name === "GitHub" && (
+  <>
+    <Input placeholder="Username" value={platformData.GitHub.username} />
+    <Input placeholder="Repositories" value={platformData.GitHub.repos} />
+    <Input placeholder="Followers" value={platformData.GitHub.followers} />
+    <Input placeholder="Following" value={platformData.GitHub.following} />
+  </>
+)}
 
                 {d.isEditing ? (
                   <Button
