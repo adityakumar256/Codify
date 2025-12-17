@@ -44,7 +44,8 @@ app.use("/uploads", express.static("uploads"));
    ROUTES
    ======================= */
 app.use("/app/user", require("./router/user"));
-app.use("/app/platform", require("./router/platform"));
+app.use("/app/platform", require("./router/platform"))
+
 app.use("/app/notes", require("./router/noteRoutes"));
 app.use("/app/profile", require("./router/profile"));
 app.use("/app/dashboard", require("./router/dashboardRoutes"));

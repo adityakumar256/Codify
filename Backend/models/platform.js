@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose")
 
 const platformSchema = new mongoose.Schema(
   {
@@ -9,25 +9,61 @@ const platformSchema = new mongoose.Schema(
       unique: true,
     },
 
-    leetcode: String,
-    leetcodeVerified: { type: Boolean, default: false },
+    leetcode: {
+      username: String,
+      totalSolved: Number,
+      easy: Number,
+      medium: Number,
+      hard: Number,
+      rating: Number,
+      profileUrl: String,
+      lastUpdated: Date,
+    },
 
-    gfg: String,
-    gfgVerified: { type: Boolean, default: false },
+    gfg: {
+      username: String,
+      solved: Number,
+      instituteRank: Number,
+      score: Number,
+      profileUrl: String,
+      lastUpdated: Date,
+    },
 
-    codechef: String,
-    codechefVerified: { type: Boolean, default: false },
+    codechef: {
+      username: String,
+      rating: Number,
+      stars: String,
+      profileUrl: String,
+      lastUpdated: Date,
+    },
 
-    codeforces: String,
-    codeforcesVerified: { type: Boolean, default: false },
+    codeforces: {
+      username: String,
+      rating: Number,
+      maxRating: Number,
+      rank: String,
+      profileUrl: String,
+      lastUpdated: Date,
+    },
 
-    hackerrank: String,
-    hackerrankVerified: { type: Boolean, default: false },
+    github: {
+      username: String,
+      repos: Number,
+      followers: Number,
+      following: Number,
+      profileUrl: String,
+      lastUpdated: Date,
+    },
 
-    github: String,
-    githubVerified: { type: Boolean, default: false },
+    hackerrank: {
+      username: String,
+      badges: Number,
+      stars: Number,
+      profileUrl: String,
+      lastUpdated: Date,
+    },
   },
   { timestamps: true }
-);
+)
 
-module.exports = mongoose.model("Platform", platformSchema);
+module.exports = mongoose.model("Platform", platformSchema)

@@ -1,18 +1,12 @@
-const express = require("express");
-const router = express.Router();
-
+const express = require("express")
+const router = express.Router()
+const auth = require("../middleware/auth")
 const {
-  platformlogin,
-  platformgetdata,
-  verifyPlatform
-} = require("../controller/platform");
+  savePlatform,
+  getPlatform,
+} = require("../controller/platform")
 
-const auth = require("../middleware/auth");
+router.post("/save", auth, savePlatform)
+router.get("/", auth, getPlatform)
 
-console.log("✅ platform router loaded");
-
-router.post("/verify", auth, verifyPlatform);
-router.post("/platlogin", auth, platformlogin);
-router.get("/platdata", auth, platformgetdata);
-
-module.exports = router;
+module.exports = router

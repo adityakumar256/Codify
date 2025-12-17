@@ -1,122 +1,76 @@
 const Platform = require("../models/platform")
 
-const fetchLeetCode = require("../utils/fetchLeetCode")
-const fetchGfg = require("../utils/fetchGfg")
-const fetchCodechef = require("../utils/fetchCodchef")
-const fetchCodeforces = require("../utils/fetchCodforces")
-const fetchHackerrank = require("../utils/fetchHackerrank")
-const fetchGithub = require("../utils/fetchGithub")
-const fetchGithubReposCount = require("../utils/fetchGithubReposCount")
-
-const normalizeProfile = require("../utils/normalizeProfile")
-
-
 const getDashboard = async (req, res) => {
   try {
     const userId = req.user.userId
 
-    // ✅ YAHI MISSING THA
     const doc = await Platform.findOne({ userId })
 
     if (!doc) {
       return res.json({
         user: req.user,
         totalSolved: 0,
-        platforms: [],
+        platforms: {},
       })
     }
 
-    const platforms = {}   // ✅ SAHI
-
+    const platforms = {}
     let totalSolved = 0
 
     /* ========= LEETCODE ========= */
-    if (doc.leetcode) {
-      const raw = await fetchLeetCode(doc.leetcode)
-      if (raw) {
-        const p = normalizeProfile({
-          platform: "leetcode",
-          username: doc.leetcode,
-          profileUrl: `https://leetcode.com/${doc.leetcode}`,
-          stats: raw,
-        })
-       platforms.leetcode = p
+    if (doc.leetcode?.username) {
+      platforms.leetcode = {
+        platform: "leetcode",
+        ...doc.leetcode,
+      }
+      totalSolved += doc.leetcode.totalSolved || 0
+    }
 
-        totalSolved += p.stats.totalSolved || 0
+    /* ========= GFG ========= */
+    if (doc.gfg?.username) {
+      platforms.gfg = {
+        platform: "gfg",
+        ...doc.gfg,
       }
     }
 
     /* ========= CODECHEF ========= */
-    if (doc.codechef) {
-      const raw = await fetchCodeChef(doc.codechef)
-      if (raw) {
-        const p = normalizeProfile({
-          platform: "codechef",
-          username: doc.codechef,
-          profileUrl: `https://www.codechef.com/users/${doc.codechef}`,
-          stats: raw,
-        })
-      platforms.codechef = p
-
-
+    if (doc.codechef?.username) {
+      platforms.codechef = {
+        platform: "codechef",
+        ...doc.codechef,
       }
     }
 
     /* ========= CODEFORCES ========= */
-    if (doc.codeforces) {
-      const raw = await fetchCodeforces(doc.codeforces)
-      if (raw) {
-        const p = normalizeProfile({
-          platform: "codeforces",
-          username: doc.codeforces,
-          profileUrl: `https://codeforces.com/profile/${doc.codeforces}`,
-          stats: raw,
-        })
-       platforms.codeforces = p
-      }
-    }
-
-    /* ========= HACKERRANK ========= */
-    if (doc.hackerrank) {
-      const raw = await fetchHackerRank(doc.hackerrank)
-      if (raw) {
-        const p = normalizeProfile({
-          platform: "hackerrank",
-          username: doc.hackerrank,
-          profileUrl: `https://www.hackerrank.com/${doc.hackerrank}`,
-          stats: raw,
-        })
-       platforms.hackerrank = p
-
+    if (doc.codeforces?.username) {
+      platforms.codeforces = {
+        platform: "codeforces",
+        ...doc.codeforces,
       }
     }
 
     /* ========= GITHUB ========= */
-    if (doc.github) {
-      const profile = await fetchGitHub(doc.github)
-      const repos = await fetchGithubReposCount(doc.github)
-
-      const p = normalizeProfile({
+    if (doc.github?.username) {
+      platforms.github = {
         platform: "github",
-        username: doc.github,
-        profileUrl: `https://github.com/${doc.github}`,
-        extra: {
-          repositories: repos,
-          followers: profile?.followers ?? null,
-          following: profile?.following ?? null,
-        },
-      })
+        ...doc.github,
+      }
+    }
 
-     platforms.github = p
-
+    /* ========= HACKERRANK ========= */
+    if (doc.hackerrank?.username) {
+      platforms.hackerrank = {
+        platform: "hackerrank",
+        ...doc.hackerrank,
+      }
     }
 
     return res.json({
-  user: req.user,
-  totalSolved,
-  platforms,   // ✅ OBJECT
-})
-
+      user: req.user,
+      totalSolved,
+      platforms,
+    })
   } catch (err) {
     console.error("Dashboard Error:", err)
     res.status(500).json({ message: "Dashboard failed" })
