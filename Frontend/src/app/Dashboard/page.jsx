@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Popup from "@/components/ui/Popup";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Code2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import "../../styles/dashboardPage.css";
 import { DashboardNavbar } from "@/components/DashboardNavbar";
 import { DashboardFooter } from "@/components/DashboardFooter";
@@ -12,37 +12,25 @@ import { Textarea } from "@/components/ui/textarea";
 /* ================= PLATFORM LIST ================= */
 
 const platforms = [
-  { name: "LeetCode", logo: "🟡" },
-  { name: "CodeChef", logo: "👨‍🍳" },
-  { name: "Codeforces", logo: "🔵" },
-  { name: "HackerRank", logo: "💚" },
-  { name: "GeeksforGeeks", logo: "🟢" },
-  { name: "GitHub", logo: "🐙" },
+  { name: "LeetCode", key: "leetcode" },
+  { name: "GeeksforGeeks", key: "gfg" },
+  { name: "CodeChef", key: "codechef" },
+  { name: "Codeforces", key: "codeforces" },
+  { name: "HackerRank", key: "hackerrank" },
+  { name: "GitHub", key: "github" },
 ];
-
-const platformKeyMap = {
-  LeetCode: "leetcode",
-  CodeChef: "codechef",
-  Codeforces: "codeforces",
-  HackerRank: "hackerrank",
-  GeeksforGeeks: "gfg",
-  GitHub: "github",
-};
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const inputRefs = useRef({});
 
   const [popup, setPopup] = useState(null);
   const [userEmail, setUserEmail] = useState("");
-  const [profileImage, setProfileImage] = useState(null);
-  const [profilePhotoFile, setProfilePhotoFile] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  /* ================= PROFILE ================= */
+  /* ================= PROFILE STATE ================= */
 
   const [profileData, setProfileData] = useState({
-    fullName: "",
+    name: "",
     college: "",
     course: "",
     branch: "",
@@ -54,42 +42,84 @@ export default function DashboardPage() {
     instagramUrl: "",
   });
 
-  /* ================= PLATFORM DATA ================= */
+  /* ================= PLATFORM STATE ================= */
 
   const [platformData, setPlatformData] = useState({
-    LeetCode: { username: "", totalSolved: "", easy: "", medium: "", hard: "", rating: "", isEditing: true },
-    GeeksforGeeks: { username: "", solved: "", instituteRank: "", score: "", isEditing: true },
-    CodeChef: { username: "", rating: "", stars: "", isEditing: true },
-    Codeforces: { username: "", rating: "", maxRating: "", rank: "", isEditing: true },
-    HackerRank: { username: "", badges: "", stars: "", isEditing: true },
-    GitHub: { username: "", repos: "", followers: "", following: "", isEditing: true },
+    leetcode: {
+      username: "",
+      totalSolved: "",
+      easy: "",
+      medium: "",
+      hard: "",
+      rating: "",
+      isEditing: true,
+    },
+    gfg: {
+      username: "",
+      solved: "",
+      instituteRank: "",
+      score: "",
+      isEditing: true,
+    },
+    codechef: {
+      username: "",
+      rating: "",
+      stars: "",
+      isEditing: true,
+    },
+    codeforces: {
+      username: "",
+      rating: "",
+      maxRating: "",
+      rank: "",
+      isEditing: true,
+    },
+    hackerrank: {
+      username: "",
+      badges: "",
+      stars: "",
+      isEditing: true,
+    },
+    github: {
+      username: "",
+      repos: "",
+      followers: "",
+      following: "",
+      isEditing: true,
+    },
   });
 
   /* ================= FETCH PROFILE ================= */
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const res = await fetch("https://codify-pia9.onrender.com/app/profile/get", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      const data = await res.json();
+      try {
+        const res = await fetch(
+          "https://codify-pia9.onrender.com/app/profile/get",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
-      setUserEmail(data.email || "");
-      setProfileData({
-        fullName: data.name || "",
-        college: data.college || "",
-        course: data.course || "",
-        branch: data.branch || "",
-        year: data.year || "",
-        contact: data.contact || "",
-        description: data.description || "",
-        linkedinUrl: data.linkedinUrl || "",
-        facebookUrl: data.facebookUrl || "",
-        instagramUrl: data.instagramUrl || "",
-      });
+        const data = await res.json();
 
-      if (data.photo) {
-        setProfileImage(`https://codify-pia9.onrender.com${data.photo}`);
+        setUserEmail(data.email || "");
+        setProfileData({
+          name: data.name || "",
+          college: data.college || "",
+          course: data.course || "",
+          branch: data.branch || "",
+          year: data.year || "",
+          contact: data.contact || "",
+          description: data.description || "",
+          linkedinUrl: data.linkedinUrl || "",
+          facebookUrl: data.facebookUrl || "",
+          instagramUrl: data.instagramUrl || "",
+        });
+      } catch (err) {
+        console.error("Profile fetch error", err);
       }
     };
 
@@ -100,31 +130,53 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchPlatforms = async () => {
-      const res = await fetch("https://codify-pia9.onrender.com/app/platform", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const res = await fetch(
+        "https://codify-pia9.onrender.com/app/platform",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       const data = await res.json();
 
       setPlatformData((prev) => ({
         ...prev,
-        LeetCode: data.leetcode ? { ...data.leetcode, isEditing: false } : prev.LeetCode,
-        GeeksforGeeks: data.gfg ? { ...data.gfg, isEditing: false } : prev.GeeksforGeeks,
-        CodeChef: data.codechef ? { ...data.codechef, isEditing: false } : prev.CodeChef,
-        Codeforces: data.codeforces ? { ...data.codeforces, isEditing: false } : prev.Codeforces,
-        HackerRank: data.hackerrank ? { ...data.hackerrank, isEditing: false } : prev.HackerRank,
-        GitHub: data.github ? { ...data.github, isEditing: false } : prev.GitHub,
+        ...Object.fromEntries(
+          Object.entries(data || {}).map(([k, v]) => [
+            k,
+            { ...v, isEditing: false },
+          ])
+        ),
       }));
     };
 
     fetchPlatforms();
   }, []);
 
+  /* ================= SAVE PROFILE ================= */
+
+  const handleProfileSave = async () => {
+    const formData = new FormData();
+    Object.entries(profileData).forEach(([k, v]) =>
+      formData.append(k, v)
+    );
+
+    await fetch("https://codify-pia9.onrender.com/app/profile/save", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: formData,
+    });
+
+    setIsEditMode(false);
+    setPopup({ type: "success", message: "Profile saved ✅" });
+  };
+
   /* ================= SAVE PLATFORM ================= */
 
-  const handleSave = async (platformName) => {
-    const key = platformKeyMap[platformName];
-    const payload = platformData[platformName];
-
+  const handlePlatformSave = async (platformKey) => {
     await fetch("https://codify-pia9.onrender.com/app/platform/save", {
       method: "POST",
       headers: {
@@ -132,34 +184,19 @@ export default function DashboardPage() {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
-        [key]: { ...payload, lastUpdated: new Date() },
+        [platformKey]: {
+          ...platformData[platformKey],
+          lastUpdated: new Date(),
+        },
       }),
     });
 
     setPlatformData((prev) => ({
       ...prev,
-      [platformName]: { ...prev[platformName], isEditing: false },
+      [platformKey]: { ...prev[platformKey], isEditing: false },
     }));
 
-    setPopup({ type: "success", message: `${platformName} saved ✅` });
-  };
-
-  /* ================= SAVE PROFILE ================= */
-
-  const handleProfileSave = async () => {
-    const formData = new FormData();
-    if (profilePhotoFile) formData.append("photo", profilePhotoFile);
-
-    Object.entries(profileData).forEach(([k, v]) => formData.append(k, v));
-
-    await fetch("https://codify-pia9.onrender.com/app/profile/save", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      body: formData,
-    });
-
-    setIsEditMode(false);
-    setPopup({ type: "success", message: "Profile saved ✅" });
+    setPopup({ type: "success", message: "Platform saved ✅" });
   };
 
   /* ================= RENDER ================= */
@@ -170,17 +207,88 @@ export default function DashboardPage() {
 
       {popup && <Popup {...popup} onClose={() => setPopup(null)} />}
 
-      {/* ---------- PROFILE UI (UNCHANGED) ---------- */}
-      {/* tumhara profile section EXACT SAME hai, logic connected */}
+      {/* ================= PROFILE ================= */}
+      <section className="px-6 mb-16">
+        <div className="container mx-auto max-w-4xl glass p-6 rounded-xl border">
+          <h2 className="text-2xl font-bold mb-4">My Profile</h2>
 
-      {/* ---------- PLATFORMS ---------- */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <Input
+              placeholder="Name"
+              value={profileData.name}
+              disabled={!isEditMode}
+              onChange={(e) =>
+                setProfileData((p) => ({ ...p, name: e.target.value }))
+              }
+            />
+            <Input placeholder="Email" value={userEmail} disabled />
+            <Input
+              placeholder="College"
+              value={profileData.college}
+              disabled={!isEditMode}
+              onChange={(e) =>
+                setProfileData((p) => ({ ...p, college: e.target.value }))
+              }
+            />
+            <Input
+              placeholder="Course"
+              value={profileData.course}
+              disabled={!isEditMode}
+              onChange={(e) =>
+                setProfileData((p) => ({ ...p, course: e.target.value }))
+              }
+            />
+            <Input
+              placeholder="Branch"
+              value={profileData.branch}
+              disabled={!isEditMode}
+              onChange={(e) =>
+                setProfileData((p) => ({ ...p, branch: e.target.value }))
+              }
+            />
+            <Input
+              placeholder="Year"
+              value={profileData.year}
+              disabled={!isEditMode}
+              onChange={(e) =>
+                setProfileData((p) => ({ ...p, year: e.target.value }))
+              }
+            />
+          </div>
+
+          <Textarea
+            className="mt-4"
+            placeholder="Description"
+            value={profileData.description}
+            disabled={!isEditMode}
+            onChange={(e) =>
+              setProfileData((p) => ({
+                ...p,
+                description: e.target.value,
+              }))
+            }
+          />
+
+          <div className="mt-4 flex gap-3">
+            {isEditMode ? (
+              <Button onClick={handleProfileSave}>Save Profile</Button>
+            ) : (
+              <Button variant="outline" onClick={() => setIsEditMode(true)}>
+                Edit Profile
+              </Button>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= PLATFORMS ================= */}
       <section className="px-6 mb-20">
         <div className="container mx-auto max-w-6xl grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {platforms.map((p) => {
-            const d = platformData[p.name];
+            const d = platformData[p.key];
             return (
-              <div key={p.name} className="glass rounded-2xl p-6 border">
-                <h3 className="text-xl font-bold mb-4">{p.logo} {p.name}</h3>
+              <div key={p.key} className="glass p-5 rounded-xl border">
+                <h3 className="text-xl font-bold mb-3">{p.name}</h3>
 
                 {Object.keys(d)
                   .filter((k) => k !== "isEditing")
@@ -188,12 +296,15 @@ export default function DashboardPage() {
                     <Input
                       key={field}
                       placeholder={field}
-                      value={d[field]}
+                      value={d[field] || ""}
                       disabled={!d.isEditing}
                       onChange={(e) =>
                         setPlatformData((prev) => ({
                           ...prev,
-                          [p.name]: { ...prev[p.name], [field]: e.target.value },
+                          [p.key]: {
+                            ...prev[p.key],
+                            [field]: e.target.value,
+                          },
                         }))
                       }
                       className="mb-2"
@@ -201,19 +312,22 @@ export default function DashboardPage() {
                   ))}
 
                 {d.isEditing ? (
-                  <Button onClick={() => handleSave(p.name)} className="w-full">
+                  <Button
+                    className="w-full"
+                    onClick={() => handlePlatformSave(p.key)}
+                  >
                     Save
                   </Button>
                 ) : (
                   <Button
                     variant="outline"
+                    className="w-full"
                     onClick={() =>
                       setPlatformData((prev) => ({
                         ...prev,
-                        [p.name]: { ...prev[p.name], isEditing: true },
+                        [p.key]: { ...prev[p.key], isEditing: true },
                       }))
                     }
-                    className="w-full"
                   >
                     Edit
                   </Button>
@@ -224,7 +338,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* ---------- CTA ---------- */}
+      {/* ================= CTA ================= */}
       <section className="px-6 mb-20 text-center">
         <Button
           onClick={() => navigate("/platform")}
