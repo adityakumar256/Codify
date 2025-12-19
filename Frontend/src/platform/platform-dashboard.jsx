@@ -13,34 +13,7 @@ const hasValue = (v) => v !== null && v !== undefined && v !== 0
 const CACHE_KEY = "dashboard_cache"
 const CACHE_TIME = 5 * 60 * 1000 // 5 minutes
 
-export default function PlatformDashboard() {
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [isDarkBg, setIsDarkBg] = useState(true)
-
-  const [dashboard, setDashboard] = useState(null)
-  const [profile, setProfile] = useState(null)
-
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const token = localStorage.getItem("token")
-    if (!token) return
-
-    /* ---------- CHECK CACHE ---------- */
-    const cached = localStorage.getItem(CACHE_KEY)
-    if (cached) {
-      const parsed = JSON.parse(cached)
-      const isFresh = Date.now() - parsed.time < CACHE_TIME
-
-      if (isFresh) {
-        setDashboard(parsed.dashboard)
-        setProfile(parsed.profile)
-        setLoading(false)
-        setIsLoaded(true)
-        return
-      }
-    }
-
+/* ---------- NORMALIZER (BACKEND → FRONTEND SHAPE) ---------- */
 const normalizePlatforms = (raw = {}) => {
   const platforms = {}
 
@@ -122,12 +95,37 @@ const normalizePlatforms = (raw = {}) => {
   return platforms
 }
 
+export default function PlatformDashboard() {
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [isDarkBg, setIsDarkBg] = useState(true)
+  const [dashboard, setDashboard] = useState(null)
+  const [profile, setProfile] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-    /* ---------- FETCH DATA (FAST) ---------- */
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (!token) return
+
+    /* ---------- CHECK CACHE ---------- */
+    const cached = localStorage.getItem(CACHE_KEY)
+    if (cached) {
+      const parsed = JSON.parse(cached)
+      const isFresh = Date.now() - parsed.time < CACHE_TIME
+
+      if (isFresh) {
+        setDashboard(parsed.dashboard)
+        setProfile(parsed.profile)
+        setLoading(false)
+        setIsLoaded(true)
+        return
+      }
+    }
+
+    /* ---------- FETCH DATA ---------- */
     const fetchData = async () => {
       try {
-        const [dashRes, profileRes] = await Promise.all([
-          fetch("https://codify-pia9.onrender.com/app/dashboard", {
+        const [platformRes, profileRes] = await Promise.all([
+          fetch("https://codify-pia9.onrender.com/app/platform", {
             headers: { Authorization: `Bearer ${token}` },
           }),
           fetch("https://codify-pia9.onrender.com/app/profile/get", {
@@ -135,29 +133,29 @@ const normalizePlatforms = (raw = {}) => {
           }),
         ])
 
-        const [dashData, profileData] = await Promise.all([
-          dashRes.json(),
+        const [platformData, profileData] = await Promise.all([
+          platformRes.json(),
           profileRes.json(),
         ])
 
-     const normalizedPlatforms = normalizePlatforms(dashData)
+        const normalizedPlatforms = normalizePlatforms(platformData)
 
-setDashboard({
-  platforms: normalizedPlatforms,
-  totalSolved: Object.values(normalizedPlatforms).reduce(
-    (sum, p) => sum + (p.stats?.totalSolved || 0),
-    0
-  ),
-})
+        const dashboardData = {
+          platforms: normalizedPlatforms,
+          totalSolved: Object.values(normalizedPlatforms).reduce(
+            (sum, p) => sum + (p.stats?.totalSolved || 0),
+            0
+          ),
+        }
 
-setProfile(profileData)
+        setDashboard(dashboardData)
+        setProfile(profileData)
 
-
-        /* ---------- SAVE CACHE ---------- */
+        /* ---------- SAVE CACHE (FIXED) ---------- */
         localStorage.setItem(
           CACHE_KEY,
           JSON.stringify({
-            dashboard: dashData,
+            dashboard: dashboardData,
             profile: profileData,
             time: Date.now(),
           })
@@ -174,25 +172,17 @@ setProfile(profileData)
   }, [])
 
   /* ---------- LOADING ---------- */
- /* ---------- LOADING ---------- */
-/* ---------- LOADING ---------- */
-if (loading) {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-6
-      bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-neutral-300">
-
-      {/* Spinner */}
-      <div className="w-14 h-14 border-4 border-neutral-700 border-t-white rounded-full animate-spin" />
-
-      {/* Animated Text */}
-      <p className="text-sm tracking-wide animate-pulse">
-        Loading dashboard…
-      </p>
-    </div>
-  )
-}
-
-
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6
+        bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-neutral-300">
+        <div className="w-14 h-14 border-4 border-neutral-700 border-t-white rounded-full animate-spin" />
+        <p className="text-sm tracking-wide animate-pulse">
+          Loading dashboard…
+        </p>
+      </div>
+    )
+  }
 
   if (!dashboard || !profile) {
     return (
@@ -202,8 +192,8 @@ if (loading) {
     )
   }
 
-  /* ---------- PLATFORMS (OBJECT → ARRAY) ---------- */
-  const platformsArray = Object.values(dashboard.platforms || {})
+  /* ---------- PLATFORMS ---------- */
+  const platformsArray = Object.values(dashboard.platforms || [])
 
   const visiblePlatforms = platformsArray.filter(
     (p) =>
@@ -224,7 +214,7 @@ if (loading) {
           : "bg-gradient-to-br from-white via-neutral-50 to-neutral-100 text-neutral-900"
       }`}
     >
-      {/* ================= THEME TOGGLE ================= */}
+      {/* THEME TOGGLE */}
       <button
         onClick={() => setIsDarkBg((prev) => !prev)}
         className="fixed top-6 right-6 z-50 p-3 rounded-full backdrop-blur-md border bg-white/10 hover:scale-110 transition"
@@ -233,7 +223,7 @@ if (loading) {
       </button>
 
       <div className="flex min-h-screen relative z-10">
-        {/* ================= SIDEBAR ================= */}
+        {/* SIDEBAR */}
         <ProfileSidebar
           user={profile}
           platforms={visiblePlatforms}
@@ -241,7 +231,7 @@ if (loading) {
           isDarkBg={isDarkBg}
         />
 
-        {/* ================= MAIN CONTENT ================= */}
+        {/* MAIN CONTENT */}
         <main className="flex-1 ml-80 mr-96 p-8 overflow-y-auto space-y-6">
           <WelcomeHeader isLoaded={isLoaded} />
 
@@ -268,9 +258,9 @@ if (loading) {
           )}
         </main>
 
-        {/* ================= RIGHT PANEL ================= */}
+        {/* RIGHT PANEL */}
         <ProblemsCircular
-         platforms={platformsArray}
+          platforms={platformsArray}
           isLoaded={isLoaded}
           isDarkBg={isDarkBg}
         />
