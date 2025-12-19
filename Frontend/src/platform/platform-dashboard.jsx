@@ -41,6 +41,88 @@ export default function PlatformDashboard() {
       }
     }
 
+const normalizePlatforms = (raw = {}) => {
+  const platforms = {}
+
+  if (raw.leetcode) {
+    platforms.leetcode = {
+      platform: "leetcode",
+      stats: {
+        totalSolved: raw.leetcode.totalSolved,
+        easy: raw.leetcode.easy,
+        medium: raw.leetcode.medium,
+        hard: raw.leetcode.hard,
+        rating: raw.leetcode.rating,
+      },
+      profile: {
+        url: raw.leetcode.profileUrl,
+      },
+      extra: {},
+    }
+  }
+
+  if (raw.codechef) {
+    platforms.codechef = {
+      platform: "codechef",
+      stats: {
+        rating: raw.codechef.rating,
+      },
+      profile: {
+        url: raw.codechef.profileUrl,
+      },
+      extra: {
+        stars: raw.codechef.stars,
+      },
+    }
+  }
+
+  if (raw.codeforces) {
+    platforms.codeforces = {
+      platform: "codeforces",
+      stats: {
+        rating: raw.codeforces.rating,
+        rank: raw.codeforces.rank,
+      },
+      profile: {
+        url: raw.codeforces.profileUrl,
+      },
+      extra: {},
+    }
+  }
+
+  if (raw.github) {
+    platforms.github = {
+      platform: "github",
+      stats: {},
+      profile: {
+        url: raw.github.profileUrl,
+      },
+      extra: {
+        repositories: raw.github.repos,
+        followers: raw.github.followers,
+      },
+    }
+  }
+
+  if (raw.hackerrank) {
+    platforms.hackerrank = {
+      platform: "hackerrank",
+      stats: {
+        stars: raw.hackerrank.stars,
+      },
+      profile: {
+        url: raw.hackerrank.profileUrl,
+      },
+      extra: {
+        badges: raw.hackerrank.badges,
+      },
+    }
+  }
+
+  return platforms
+}
+
+
     /* ---------- FETCH DATA (FAST) ---------- */
     const fetchData = async () => {
       try {
@@ -58,8 +140,18 @@ export default function PlatformDashboard() {
           profileRes.json(),
         ])
 
-        setDashboard(dashData)
-        setProfile(profileData)
+     const normalizedPlatforms = normalizePlatforms(dashData)
+
+setDashboard({
+  platforms: normalizedPlatforms,
+  totalSolved: Object.values(normalizedPlatforms).reduce(
+    (sum, p) => sum + (p.stats?.totalSolved || 0),
+    0
+  ),
+})
+
+setProfile(profileData)
+
 
         /* ---------- SAVE CACHE ---------- */
         localStorage.setItem(
