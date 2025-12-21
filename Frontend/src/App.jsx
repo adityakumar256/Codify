@@ -1,20 +1,19 @@
-import React from "react"
-import { Routes, Route } from "react-router-dom"
-import ProtectedRoute from "./components/ProtectedRoute"
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 /* 🌐 Public Pages */
-import AuthPage from "./app/page"
-import LoginPage from "./Pages/LoginPage"
-import SignupPage from "./Pages/RedSignupPage"
+import AuthPage from "./app/page";
+import LoginPage from "./Pages/LoginPage";
+import SignupPage from "./Pages/RedSignupPage";
 
 /* 🔐 Protected Pages */
-import DashboardPage from "./app/Dashboard/page"
-import PlatformPage from "./app/platform/page"
-import NotesPage from "./app/notes/Notes"
+import DashboardPage from "./app/Dashboard/page";
+import NotesPage from "./app/notes/Notes";
 
 /* 📄 Public Info Pages */
-import AboutPage from "./app/about/About"
-import ContactPage from "./app/contact/Contact"
+import AboutPage from "./app/about/About";
+import ContactPage from "./app/contact/Contact";
 
 export default function App() {
   return (
@@ -35,15 +34,6 @@ export default function App() {
       />
 
       <Route
-        path="/platform"
-        element={
-          <ProtectedRoute>
-            <PlatformPage />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
         path="/notes"
         element={
           <ProtectedRoute>
@@ -56,5 +46,5 @@ export default function App() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
     </Routes>
-  )
+  );
 }
